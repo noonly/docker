@@ -1,0 +1,68 @@
+upstream zuxiaindex {
+	least_conn;
+        {{range service "index"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+	{{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream auth {
+	least_conn;
+	{{range service "auth"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+	{{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream login {
+	least_conn;
+	{{range service "login"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream info {
+        least_conn;
+        {{range service "info"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream update {
+        least_conn;
+        {{range service "update"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+server {
+	listen 80; 
+	location /Authority/ {  
+		proxy_pass http://auth;
+		#proxy_set_header Host $host;
+		##proxy_pass http://noonly.com:80/;
+		#proxy_connect_timeout      10;
+	        #proxy_send_timeout         10;
+        	#proxy_read_timeout         10;
+     		#proxy_buffer_size          4k;
+        	#proxy_buffers              4 32k;
+        	#proxy_busy_buffers_size    64k;
+        	#proxy_temp_file_write_size 64k;
+	}
+	location /admin/ {
+		proxy_pass http://zuxiaindex;
+	}
+
+	location /public/ {
+                proxy_pass http://zuxiaindex;
+        }
+
+	location /Login/ {
+                proxy_pass http://login;
+        }
+ 	location /Info/ {
+                proxy_pass http://info;
+        }
+
+	location /Update/ {
+                proxy_pass http://update;
+        }
+	
+	location /AccessInterface/ {
+                proxy_pass http://auth;
+        }
+
+}

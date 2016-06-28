@@ -1,0 +1,15 @@
+{
+    "service":{
+        "name":"www",
+        "tags":[
+            "web",
+            "nginx"
+        ],
+         "port":6379,
+         "check":{
+             "name":"status",
+             "tcp":"localhost:80",
+             "interval":"30s"
+         }
+     }
+}
