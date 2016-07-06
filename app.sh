@@ -41,7 +41,9 @@ do
 		fi
 		read -p "Please select one option for startup [0-$i]: " tmp
 	else 
-		tmp=""
+		echo "No project for discovery."
+		#tmp="__"
+		exit
 	fi
 
 done
