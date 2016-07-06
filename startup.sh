@@ -7,7 +7,7 @@ while [ "_$tmp" == '_' ]
 do
 	#echo ""
 	#echo "invalid container name! please retry!!!"
-	read -p "Please setting the consul service discovery application master node docker container name: " tmp
+	read -p "Please settings the consul master container name: " tmp
 	echo ""
 	for exist in $CONTAINERNAME
         do
@@ -32,7 +32,7 @@ tmp=""
 
 while [ "_$tmp" == '_' ]
 do
-	read -p "Please setting the redis master node docker container name: " tmp
+	read -p "Please settings the redis master container name: " tmp
 	echo ""
 	 for exist in $CONTAINERNAME
         do
@@ -62,7 +62,7 @@ while [ "_$tmp" == '_' ]
 do
 	#echo "\n"
         #echo "invalid container name! please retry!!!\n"
-        read -p "Please setting the redis slave node docker container name: " tmp
+        read -p "Please settings the redis slave container name: " tmp
 	echo ""
         for exist in $CONTAINERNAME
         do
@@ -86,7 +86,7 @@ tmp=""
 
 while [ "_$tmp" == '_' ]
 do
-        read -p "Please setting the consul slave node docker container name: " tmp
+        read -p "Please settings the consul slave container name: " tmp
 	 echo ""
         for exist in $CONTAINERNAME
         do
@@ -109,7 +109,7 @@ tmp=""
 
 while [ "_$tmp" == '_' ]
 do
-        read -p "Please setting the nginx server docker container name: " tmp
+        read -p "Please settings the nginx server container name: " tmp
 	 echo ""
         for exist in $CONTAINERNAME
         do
@@ -132,7 +132,7 @@ tmp=""
 
 while [ "_$tmp" == '_' ]
 do
-        read -p "Please setting the mysql server node docker container name: " tmp
+        read -p "Please settings the mysql libuser server container name: " tmp
 	 echo ""
         for exist in $CONTAINERNAME
         do
