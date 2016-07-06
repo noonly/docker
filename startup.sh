@@ -24,7 +24,7 @@ done
 CONTAINERNAME[0]=$tmp
 echo "Your consul master container $tmp is running"
 #run consul master node
-docker run -d --name $tmp --hostname $tmp progrium/consul -server -bootstrap
+docker run -d -v /etc/localtime:/etc/localtime:ro --name $tmp --hostname $tmp progrium/consul -server -bootstrap
 #export consul master node ip address
 CONSUL_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $tmp)
 tmp=""
@@ -51,7 +51,7 @@ CONTAINERNAME[1]=$tmp
 echo "Your redis master container $tmp is running"
 
 #run redis master server
-docker run -d  -v $BASEDIR/redis/redis.conf.bak:/usr/local/etc/redis/redis.conf -v $BASEDIR/redis/service.json:/etc/consul.d/service1.json \
+docker run -d -v /etc/localtime:/etc/localtime:ro -v $BASEDIR/redis/redis.conf.bak:/usr/local/etc/redis/redis.conf -v $BASEDIR/redis/service.json:/etc/consul.d/service1.json \
 --name $tmp --hostname $tmp --env REDISCONF=/usr/local/etc/redis/redis.conf --env CONSUL_HOST=$CONSUL_IP noonly/redis
 
 
@@ -79,7 +79,7 @@ CONTAINERNAME[2]=$tmp
 
 echo "Your redis slave container $tmp is running"
 #run redis slave server
-docker run --link redis-master:redis-master --hostname $tmp -v $BASEDIR/redis/redis.conf:/usr/local/etc/redis/redis.conf \
+docker run -v /etc/localtime:/etc/localtime:ro --link ${CONTAINERNAME[1]}:redis-master --hostname $tmp -v $BASEDIR/redis/redis.conf:/usr/local/etc/redis/redis.conf \
 --env REDISCONF=/usr/local/etc/redis/redis.conf --env CONSUL_HOST=$CONSUL_IP --name $tmp -d noonly/redis
 
 tmp=""
@@ -103,7 +103,7 @@ CONTAINERNAME[3]=$tmp
 
 echo "Your consul slave container $tmp is running"
 #run consul client for master node
-docker run -d --name $tmp --hostname $tmp --env CONSUL_HOST=$CONSUL_IP noonly/consul
+docker run -d --name $tmp --hostname $tmp -v /etc/localtime:/etc/localtime:ro --env CONSUL_HOST=$CONSUL_IP noonly/consul
 
 tmp=""
 
@@ -125,7 +125,7 @@ done
 CONTAINERNAME[4]=$tmp
 echo "Your www container $tmp is running"
 #run nginx 
-docker run -d --name $tmp --hostname $tmp -v $BASEDIR/nginx/conf.d/:/etc/nginx/conf.d/:rw --env CONSUL_HOST=$CONSUL_IP noonly/nginx
+docker run -d --name $tmp --hostname $tmp -v $BASEDIR/nginx/conf.d/:/etc/nginx/conf.d/:rw -v /etc/localtime:/etc/localtime:ro --env CONSUL_HOST=$CONSUL_IP noonly/nginx
 
 
 tmp=""
@@ -148,5 +148,5 @@ done
 CONTAINERNAME[5]=$tmp
 echo "Your libuser mysql container $tmp is running"
 #run mysql server
-docker run -d -v /var/lib/mysql/libuser/db:/var/lib/mysql -v /var/lib/mysql/libuser/mysql.json:/etc/consul.d/mysql.json \
+docker run -d -v /var/lib/mysql/libuser/db:/var/lib/mysql -v /etc/localtime:/etc/localtime:ro -v /var/lib/mysql/libuser/mysql.json:/etc/consul.d/mysql.json \
 -e MYSQL_ROOT_PASSWORD=123456 --name $tmp --hostname $tmp -e CONSUL_HOST=$CONSUL_IP noonly/mysql

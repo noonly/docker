@@ -70,6 +70,7 @@ if [ "_${projectname[$tmp]}" == '_all' ]; then
 			docker run -d --name "node-"${projectname[$j]} --env CONSUL_HOST=$ip \
 --hostname tomcat-"node-${projectname[$j]}" -v project[$j]:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
+-v /etc/localtime:/etc/localtime:ro \
 -v $PWD/tomcat/super.json:/etc/consul.d/super.json noonly/tomcat-debug	
 		fi
 	j=$(($j+1))
@@ -82,6 +83,7 @@ echo "Starting container: ${projectname[$tmp]}"
 docker run -d --name "node-"${projectname[$tmp]} --env CONSUL_HOST=$ip \
 --hostname tomcat-"node-${projectname[$tmp]}" -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
+-v /etc/localtime:/etc/localtime:ro \
 -v $PWD/tomcat/super.json:/etc/consul.d/super.json noonly/tomcat-debug
 fi
 
