@@ -35,10 +35,10 @@ do
 		#if [ folder ]
         done
 	if [ $i -gt 0 ]; then
-		if [ $i -gt 1 ]; then
+#		if [ $i -gt 1 ]; then
 			echo "$i.Select all"
 			projectname[$i]="all"
-		fi
+#		fi
 		read -p "Please select one option for startup [0-$i]: " tmp
 	else 
 		echo "No project for discovery."
