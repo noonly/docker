@@ -26,7 +26,7 @@ echo "Your consul master container $tmp is running"
 #run consul master node
 docker run -d --name $tmp --hostname $tmp progrium/consul -server -bootstrap
 #export consul master node ip address
-CONSUL_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' master)
+CONSUL_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $tmp)
 tmp=""
 #read -p "Please setting the redis master node docker container name: " tmp
 
