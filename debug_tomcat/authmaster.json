@@ -1,0 +1,15 @@
+{
+    "service":{
+        "name":"auth",
+        "tags":[
+            "web",
+	    "tomcat"
+        ],
+         "port":8080,
+         "check":{
+             "name":"status",
+             "tcp":"localhost:8080",
+             "interval":"30s"
+         }
+     }
+}

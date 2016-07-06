@@ -28,8 +28,43 @@ upstream update {
         {{else}}server 127.0.0.1:65535; # force a 502{{end}}
 }
 
+upstream exam {
+        least_conn;
+        {{range service "exam"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream question {
+        least_conn;
+        {{range service "question"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream record {
+        least_conn;
+        {{range service "record"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+upstream plan {
+        least_conn;
+        {{range service "plan"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+upstream super {
+        least_conn;
+        {{range service "super"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+
 server {
 	listen 80; 
+	location = / {
+                #proxy_pass http://zuxiaindex/admin;
+		rewrite ^(.*)$ /admin/login.html last;
+        }
+
 	location /Authority/ {  
 		proxy_pass http://auth;
 		#proxy_set_header Host $host;
@@ -64,5 +99,20 @@ server {
 	location /AccessInterface/ {
                 proxy_pass http://auth;
         }
-
+	
+	location /TestController/ {
+		proxy_pass http://exam;
+	}
+	location /Question/ {
+                proxy_pass http://question;
+        }
+	location /RecordController/ {
+                proxy_pass http://record;
+        }
+	location /TestPlan/ {
+                proxy_pass http://plan;
+        }
+	location /SupperManage/ {
+                proxy_pass http://super;
+        }
 }

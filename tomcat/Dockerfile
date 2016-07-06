@@ -1,6 +1,6 @@
 # Dockerfile
 # start from official mongo image
-FROM abzcoding/tomcat-redis
+FROM tomcat
 
 RUN apt-get update && apt-get install -y unzip dnsmasq python
 # install consul agent
@@ -23,6 +23,7 @@ RUN cd /bin && \
 ADD 10-consul /etc/dnsmasq.d/10-consul
 ADD consul-template /bin/consul-template
 COPY dnsmasq.conf /etc/dnsmasq.conf
+ADD manage.sh /manage.sh
 
 # Install goreman - foreman clone written in Go language
 

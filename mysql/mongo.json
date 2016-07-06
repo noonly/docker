@@ -1,0 +1,10 @@
+{
+    "service":{
+        "name":"mysql",
+        "tags":[
+            "database",
+            "mysql-2"
+        ],
+         "port":3306
+     }
+}
