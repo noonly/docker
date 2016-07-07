@@ -10,6 +10,8 @@ do
 
         	echo "invalid path! please retry!!!"
                 tmp=""
+	else
+		tmp="/var/lib/git/"
         fi
 
 done
