@@ -95,6 +95,6 @@ docker run -d --name "node-"${projectname[$tmp]} --env CONSUL_HOST=$ip \
 --hostname tomcat-"node-${projectname[$tmp]}" -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
--v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug
+-v $PWD/tomcat/${projectname[$tmp]}.json:/etc/consul.d/${projectname[$tmp]}.json noonly/tomcat-debug
 fi
 
