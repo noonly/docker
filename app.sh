@@ -6,12 +6,13 @@ do
         #echo "invalid container name! please retry!!!"
         read -p "Please settings tomcat webapps path (etc. /var/lib/git/): " tmp
         echo ""
+	if [ "_$tmp" == "_" ]; then
+		tmp="/var/lib/git/"
+	fi
 	if [ ! -d "$tmp" ]; then
 
         	echo "invalid path! please retry!!!"
                 tmp=""
-	else
-		tmp="/var/lib/git/"
         fi
 
 done
