@@ -115,4 +115,7 @@ server {
 	location /SupperManage/ {
                 proxy_pass http://super;
         }
+	location /StdImportExport/ {
+		proxy_pass http://update;
+	}
 }
