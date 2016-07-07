@@ -49,7 +49,17 @@ do
 done
 
 #echo ${projectname[$tmp]}
+ip=$CONSUL_IP
+if [ "_$ip" != '_' ]; then
 
+
+	read -p "Do you want to use $ip as consul server address? [y/n]: " y
+
+	if [ "_$y" != "_y" ]; then
+		ip=""
+	fi
+
+fi
 while [ "_$ip" == '_' ]
 do
         #echo ""
@@ -59,6 +69,7 @@ do
 
 done
 
+export CONSUL_IP=$ip
 
 if [ "_${projectname[$tmp]}" == '_all' ]; then
 	echo "Starting all...."
@@ -71,7 +82,7 @@ if [ "_${projectname[$tmp]}" == '_all' ]; then
 --hostname tomcat-"node-${projectname[$j]}" -v project[$j]:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
--v $PWD/tomcat/super.json:/etc/consul.d/super.json noonly/tomcat-debug	
+-v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug	
 		fi
 	j=$(($j+1))
 	done
@@ -84,6 +95,6 @@ docker run -d --name "node-"${projectname[$tmp]} --env CONSUL_HOST=$ip \
 --hostname tomcat-"node-${projectname[$tmp]}" -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
--v $PWD/tomcat/super.json:/etc/consul.d/super.json noonly/tomcat-debug
+-v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug
 fi
 
