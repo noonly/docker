@@ -4,10 +4,11 @@ if [ `uname -v | awk '{print $1}'` == '#40~14.04.1-Ubuntu' ]; then
 	echo "You will be install docker engine ..."
 else
 	read -p "Your server OS version may be not support for install Docker. Do you continue? [y/n]" tmp
-fi
-if [ "_$tmp" != "_y" ]; then
-	echo "Installation canceled."
-	exit 0
+
+	if [ "_$tmp" != "_y" ]; then
+		echo "Installation canceled."
+		exit 0
+	fi
 fi
 sudo apt-get update
 sudo apt-get install apt-transport-https ca-certificates
