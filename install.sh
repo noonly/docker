@@ -99,3 +99,7 @@ echo "bridge_stp off" | sudo tee -a /etc/network/interfaces
 fi
 
 echo "DOCKER_OPTS=\"-b=br0 --fixed-cidr='$address/28'\"" | sudo tee -a /etc/default/docker
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+
