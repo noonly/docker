@@ -7,6 +7,30 @@ BASEDIR=`pwd`
 #read -p "Please setting the consul service discovery application master node docker container name: " tmp
 invalied=""
 CONTAINERNAME=""
+
+while [ "_$tmp" == '_' ]
+do
+        #echo ""
+        #echo "invalid container name! please retry!!!"
+        read -p "Do you want to join the existing cluster:[y/n] " tmp
+
+done
+
+if [ "_$tmp" == '_y' ]; then
+	tmp=""
+	while [ "_$tmp" == '_' ]
+	do
+        	#echo ""
+        	#echo "invalid container name! please retry!!!"
+       		read -p "Please enter the address of any node in the cluster: " tmp
+		clusterip=$tmp	
+
+	done
+
+fi
+ 
+tmp=""
+
 while [ "_$tmp" == '_' ]
 do
 	#echo ""
@@ -28,7 +52,12 @@ done
 CONTAINERNAME[0]=$tmp
 echo "Your consul master container $tmp is running"
 #run consul master node
-docker run -d -v /etc/localtime:/etc/localtime:ro --name $tmp --hostname $tmp progrium/consul -server -bootstrap
+if [ "_$clusterip" != "_" ]; then
+	docker run -d -v /etc/localtime:/etc/localtime:ro --name $tmp --hostname $tmp progrium/consul -server --join $clusterip
+else
+	docker run -d -v /etc/localtime:/etc/localtime:ro --name $tmp --hostname $tmp progrium/consul -server -bootstrap
+
+fi
 #export consul master node ip address
 CONSUL_IP=$(docker inspect -f '{{ .NetworkSettings.IPAddress }}' $tmp)
 tmp=""
