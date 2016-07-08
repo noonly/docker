@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+#author xiaole <xiaole@noonly.com>
+#
+#
 BASEDIR=`pwd`
 #read -p "Please setting the consul service discovery application master node docker container name: " tmp
 invalied=""
