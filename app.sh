@@ -81,6 +81,7 @@ if [ "_${projectname[$tmp]}" == '_all' ]; then
 	do
 
 		if [ "_${projectname[$j]}" != '_all' ]; then
+			echo "${projectname[$j]} starting"
 			docker run -d --name "node-"${projectname[$j]} --env CONSUL_HOST=$ip \
 --hostname tomcat-"node-${projectname[$j]}" -v pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
