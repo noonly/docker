@@ -77,12 +77,13 @@ export CONSUL_IP=$ip
 if [ "_${projectname[$tmp]}" == '_all' ]; then
 	echo "Starting all...."
 	j=0;
-	for pro in project 
+	for pro in ${project[@]}; 
 	do
-
-		if [ "_${projectname[$tmp]}" != '_all' ]; then
+		echo "${projectname[$j]} starting"
+		if [ "_${projectname[$j]}" != '_all' ]; then
+			#$echo "${projectname[$j]} starting"
 			docker run -d --name "node-"${projectname[$j]} --env CONSUL_HOST=$ip \
---hostname tomcat-"node-${projectname[$j]}" -v project[$j]:/project \
+--hostname tomcat-"node-${projectname[$j]}" -v pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
 -v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug	
