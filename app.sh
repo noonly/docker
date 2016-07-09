@@ -77,7 +77,7 @@ export CONSUL_IP=$ip
 if [ "_${projectname[$tmp]}" == '_all' ]; then
 	echo "Starting all...."
 	j=0;
-	for pro in project 
+	for pro in $project 
 	do
 
 		if [ "_${projectname[$tmp]}" != '_all' ]; then
