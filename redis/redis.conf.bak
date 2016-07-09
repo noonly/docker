@@ -49,6 +49,8 @@ pidfile /var/run/redis.pid
 # If port 0 is specified Redis will not listen on a TCP socket.
 port 6379
 
+protected-mode no
+
 # TCP listen() backlog.
 #
 # In high requests-per-second environments you need an high backlog in order
