@@ -105,6 +105,7 @@ server {
 	}
 	location /Question/ {
                 proxy_pass http://question;
+		client_max_body_size    1000m;  
         }
 	location /RecordController/ {
                 proxy_pass http://record;
