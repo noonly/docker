@@ -1,23 +1,27 @@
 #! /bin/bash
 PWD=`pwd`
+
+workpath=`cat .local 2> /dev/null`
+if [ "_$workpath" == "_" ]; then
+	workpath="/var/lib/git/"
+fi
 while [ "_$tmp" == '_' ]
 do
         #echo ""
         #echo "invalid container name! please retry!!!"
-        read -p "Please settings tomcat webapps path (etc. /var/lib/git/): " tmp
-        echo ""
+        read -p "Please settings tomcat webapps path (default: $workpath): " tmp
 	if [ "_$tmp" == "_" ]; then
-		tmp="/var/lib/git/"
+		tmp=$workpath
 	fi
 	if [ ! -d "$tmp" ]; then
-
         	echo "invalid path! please retry!!!"
-                tmp=""
+            tmp=""
         fi
 
 done
 
 path=$tmp
+echo "$path" > .local 2> /dev/null
 tmp=""
 #project=""
 while [ "_$tmp" == '_' ]
@@ -53,23 +57,26 @@ done
 
 #echo ${projectname[$tmp]}
 ip=$CONSUL_IP
+if [ "_$ip" == "_" ]; then
+	ip=`cat .ip 2> /dev/null`
+fi
 if [ "_$ip" != '_' ]; then
 
 
 	read -p "Do you want to use $ip as consul server address? [y/n]: " y
-
+	
 	if [ "_$y" != "_y" ]; then
 		ip=""
 	fi
-
 fi
+
 while [ "_$ip" == '_' ]
 do
         #echo ""
         #echo "invalid container name! please retry!!!"
         read -p "Please input consul master ip address: " ip
 
-
+		echo "$ip" > .ip
 done
 
 export CONSUL_IP=$ip
