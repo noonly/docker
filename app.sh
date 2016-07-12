@@ -80,17 +80,19 @@ do
 done
 
 export CONSUL_IP=$ip
-
+#--hostname tomcat-"node-${projectname[$j]}" 
 if [ "_${projectname[$tmp]}" == '_all' ]; then
 	echo "Starting all...."
 	j=0;
 	for pro in ${project[@]}; 
 	do
+	n="node-${projectname[$j]}"
+read -p "Please input ${projectname[$tmp]} project container name (default: node-${projectname[$tmp]}):" n
 		echo "${projectname[$j]} starting"
 		if [ "_${projectname[$j]}" != '_all' ]; then
 			#$echo "${projectname[$j]} starting"
-			docker run -d --name "node-"${projectname[$j]} --env CONSUL_HOST=$ip \
---hostname tomcat-"node-${projectname[$j]}" -v $pro:/project \
+			docker run -d --name "$n" --env CONSUL_HOST=$ip \
+-v $pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
 -v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug	
@@ -99,11 +101,14 @@ if [ "_${projectname[$tmp]}" == '_all' ]; then
 	done
 
 else
+n="node-${projectname[$tmp]}"
+read -p "Please input ${projectname[$tmp]} project container name (default: node-${projectname[$tmp]}):" n
 echo "Starting container: ${projectname[$tmp]}"
 
+#--hostname tomcat-"node-${projectname[$tmp]}"
 
-docker run -d --name "node-"${projectname[$tmp]} --env CONSUL_HOST=$ip \
---hostname tomcat-"node-${projectname[$tmp]}" -v ${project[$tmp]}:/project \
+docker run -d --name "$n" --env CONSUL_HOST=$ip \
+-v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
 -v $PWD/tomcat/${projectname[$tmp]}.json:/etc/consul.d/${projectname[$tmp]}.json noonly/tomcat-debug
