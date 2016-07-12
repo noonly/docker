@@ -208,7 +208,48 @@ if [ "_$y" == "_y" ]; then
 	CONTAINERNAME[$index]=$tmp
 	echo "Your libuser mysql container $tmp is running"
 	#run mysql server
+	if [ ! -d "/var/lib/mysql/libuser/db" ]; then
+		read -p "'/var/lib/mysql/libuser/db' does not exist. Would you like to create it[y/n]?" m
+		if [ "_$m" == "_y" ]; then
+			sudo mkdir -p "/var/lib/mysql/libuser/db"
+		fi
+	fi 
 	docker run -d -v /var/lib/mysql/libuser/db:/var/lib/mysql -v /etc/localtime:/etc/localtime:ro -v /var/lib/mysql/libuser/mysql.json:/etc/consul.d/mysql.json \
 	-e MYSQL_ROOT_PASSWORD=123456 --name $tmp --hostname $tmp -e CONSUL_HOST=$CONSUL_IP noonly/mysql
 	tmp=""
+fi
+
+read -p "Do you want to startup libexam mysql server? [y/N]" y
+
+if [ "_$y" == "_y" ]; then
+        y=""
+        while [ "_$tmp" == '_' ]
+        do
+                        read -p "Please settings the mysql libexam server container name: " tmp
+                 echo ""
+                        for exist in $CONTAINERNAME
+                        do
+                                        if [ "x$tmp" == "x$exist" ]; then
+
+                                                        echo "invalid container name! please retry!!!"
+                                                        tmp=""
+                                        fi
+                        done
+
+        done
+
+        index=$(($index+1))
+        CONTAINERNAME[$index]=$tmp
+        echo "Your libexam mysql container $tmp is running"
+        #run mysql server
+	if [ ! -d "/var/lib/mysql/libexam/db" ]; then
+                read -p "'/var/lib/mysql/libexam/db' does not exist. Would you like to create it[y/n]?" m
+                if [ "_$m" == "_y" ]; then
+                        sudo mkdir -p "/var/lib/mysql/libexam/db"
+                fi
+        fi
+
+        docker run -d -v /var/lib/mysql/libexam/db:/var/lib/mysql -v /etc/localtime:/etc/localtime:ro -v /var/lib/mysql/libexam/mysql.json:/etc/consul.d/mysql.json \
+        -e MYSQL_ROOT_PASSWORD=123456 --name $tmp --hostname $tmp -e CONSUL_HOST=$CONSUL_IP noonly/mysql
+        tmp=""
 fi
