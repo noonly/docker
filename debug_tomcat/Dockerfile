@@ -24,6 +24,7 @@ ADD 10-consul /etc/dnsmasq.d/10-consul
 ADD consul-template /bin/consul-template
 COPY dnsmasq.conf /etc/dnsmasq.conf
 ADD manage.sh /manage.sh
+ADD server.xml /usr/local/tomcat/conf/server.xml
 
 ADD node-v4.4.7-linux-x64 /nodejs
 
