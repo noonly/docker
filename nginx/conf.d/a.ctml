@@ -66,6 +66,11 @@ upstream questionprivilege {
         {{range service "questionprivilege"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
         {{else}}server 127.0.0.1:65535; # force a 502{{end}}
 }
+upstream class {
+        least_conn;
+        {{range service "class"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
+        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
 
 server {
 	listen 80; 
@@ -131,7 +136,10 @@ server {
 	location /Oeac/ {
 		proxy_pass http://oeac;
 	}
-	location /QuestionJurisdiction/ {
+	location /QuestionPrivilege/ {
 		proxy_pass http://questionprivilege;
 	}
+	location /Class/ {
+                proxy_pass http://class;
+        }
 }
