@@ -87,7 +87,7 @@ if [ "_${projectname[$tmp]}" == '_all' ]; then
 	for pro in ${project[@]}; 
 	do
 	n="node-${projectname[$j]}"
-read -p "Please input ${projectname[$tmp]} project container name (default: node-${projectname[$tmp]}):" n
+read -p "Please input ${projectname[$j]} project container name (default: node-${projectname[$j]}):" n
 		echo "${projectname[$j]} starting"
 		if [ "_${projectname[$j]}" != '_all' ]; then
 			#$echo "${projectname[$j]} starting"
@@ -95,7 +95,8 @@ read -p "Please input ${projectname[$tmp]} project container name (default: node
 -v $pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
--v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json noonly/tomcat-debug	
+#-v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json
+ noonly/tomcat-debug	
 		fi
 	j=$(($j+1))
 	done
@@ -111,6 +112,7 @@ docker run -d --name "$n" --env CONSUL_HOST=$ip \
 -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
--v $PWD/tomcat/${projectname[$tmp]}.json:/etc/consul.d/${projectname[$tmp]}.json noonly/tomcat-debug
+#-v $PWD/tomcat/${projectname[$tmp]}.json:/etc/consul.d/${projectname[$tmp]}.json 
+noonly/tomcat-debug
 fi
 
