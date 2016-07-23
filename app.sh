@@ -95,7 +95,6 @@ read -p "Please input ${projectname[$j]} project container name (default: node-$
 -v $pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
-#-v $PWD/tomcat/${projectname[$j]}.json:/etc/consul.d/${projectname[$j]}.json
  noonly/tomcat-debug	
 		fi
 	j=$(($j+1))
@@ -112,7 +111,6 @@ docker run -d --name "$n" --env CONSUL_HOST=$ip \
 -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
-#-v $PWD/tomcat/${projectname[$tmp]}.json:/etc/consul.d/${projectname[$tmp]}.json 
 noonly/tomcat-debug
 fi
 
