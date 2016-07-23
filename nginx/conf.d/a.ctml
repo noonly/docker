@@ -1,145 +1,34 @@
-upstream zuxiaindex {
-	least_conn;
-        {{range service "index"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-	{{else}}server 127.0.0.1:65535; # force a 502{{end}}
+{{range services}}{{ if .Tags.Contains "web" }}upstream {{.Name}} {
+	least_conn;{{range service .Name}}
+	server  {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{else}}server 127.0.0.1:65535;{{end}}
 }
-
-upstream auth {
-	least_conn;
-	{{range service "auth"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-	{{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream login {
-	least_conn;
-	{{range service "login"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream info {
-        least_conn;
-        {{range service "info"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream update {
-        least_conn;
-        {{range service "update"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream exam {
-        least_conn;
-        {{range service "exam"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream question {
-        least_conn;
-        {{range service "question"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream record {
-        least_conn;
-        {{range service "record"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-
-upstream plan {
-        least_conn;
-        {{range service "plan"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-upstream super {
-        least_conn;
-        {{range service "super"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-upstream oeac {
-        least_conn;
-        {{range service "oeac"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-upstream questionprivilege {
-        least_conn;
-        {{range service "questionprivilege"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
-upstream class {
-        least_conn;
-        {{range service "class"}}server {{.Address}}:{{.Port}};## {{if (.Tags.Contains "backup")}}backup{{end}};
-        {{else}}server 127.0.0.1:65535; # force a 502{{end}}
-}
+{{end}}{{end}}
 
 server {
 	listen 80; 
-	location = / {
+	#if ($cookie_NOONLY != "qwedqdasdasd$remote_addr"){
+                 #add_header Set-Cookie "NOONLY=qwedqdasdasd$remote_addr; path=/;";
+         #        rewrite .* "$scheme://$host/" redirect;
+        #}
+
+
+	location / {
+		 if ($cookie_NOONLY != "12312bnngbwse$remote_addr"){
+                        add_header Set-Cookie "NOONLY=12312bnngbwse$remote_addr; path=/;";
+                        rewrite .* "$scheme://$host$uri" redirect;
+                }
+
                 #proxy_pass http://zuxiaindex/admin;
+		#rewrite ^(.*)$ /admin/login.html last;
+        }
+
+	location =/ {
 		rewrite ^(.*)$ /admin/login.html last;
-        }
-
-	location /Authority/ {  
-		proxy_pass http://auth;
-		#proxy_set_header Host $host;
-		##proxy_pass http://noonly.com:80/;
-		#proxy_connect_timeout      10;
-	        #proxy_send_timeout         10;
-        	#proxy_read_timeout         10;
-     		#proxy_buffer_size          4k;
-        	#proxy_buffers              4 32k;
-        	#proxy_busy_buffers_size    64k;
-        	#proxy_temp_file_write_size 64k;
-	}
-	location /admin/ {
-		proxy_pass http://zuxiaindex;
 	}
 
-	location /public/ {
-                proxy_pass http://zuxiaindex;
-        }
-
-	location /Login/ {
-                proxy_pass http://login;
-        }
- 	location /Info/ {
-                proxy_pass http://info;
-        }
-
-	location /Update/ {
-                proxy_pass http://update;
-        }
-	
-	location /AccessInterface/ {
-                proxy_pass http://auth;
-        }
-	
-	location /TestController/ {
-		proxy_pass http://exam;
-	}
-	location /Question/ {
-                proxy_pass http://question;
-		client_max_body_size    1000m;  
-        }
-	location /RecordController/ {
-                proxy_pass http://record;
-        }
-	location /TestPlan/ {
-                proxy_pass http://plan;
-        }
-	location /SupperManage/ {
-                proxy_pass http://super;
-        }
-	location /StdImportExport/ {
-		proxy_pass http://update;
-	}
-	location /Oeac/ {
-		proxy_pass http://oeac;
-	}
-	location /QuestionPrivilege/ {
-		proxy_pass http://questionprivilege;
-	}
-	location /Class/ {
-                proxy_pass http://class;
-        }
+	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
+		proxy_pass http://{{.Name}};
+		client_max_body_size    1000m;
+  	}
+	{{end}}{{end}}
 }
