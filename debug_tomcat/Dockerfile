@@ -26,10 +26,10 @@ COPY dnsmasq.conf /etc/dnsmasq.conf
 ADD manage.sh /manage.sh
 ADD server.xml /usr/local/tomcat/conf/server.xml
 
-ADD node-v4.4.7-linux-x64 /nodejs
+#ADD node-v4.4.7-linux-x64 /nodejs
 
-ENV PATH $PATH:/nodejs/bin
-ADD run.js /run.js
+#ENV PATH $PATH:/nodejs/bin
+#ADD run.js /run.js
 
 # Install goreman - foreman clone written in Go language
 

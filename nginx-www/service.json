@@ -1,6 +1,6 @@
 {
     "service":{
-        "name":"www",
+        "name":"webroot",
         "tags":[
             "web",
             "nginx"
