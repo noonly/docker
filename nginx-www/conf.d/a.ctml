@@ -1,6 +1,9 @@
+limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=100r/s;
+
 {{range services}}{{ if .Tags.Contains "web" }}upstream {{.Name}} {
 	least_conn;
-	{{range service .Name}}server  {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{else}}server 127.0.0.1:65535;{{end}}
+	{{range service .Name}}server  {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{else}}server 127.0.0.1:65535;
+{{end}}
 }
 {{end}}{{end}}
 
@@ -9,47 +12,36 @@ server {
 
 
 	location =/ {
-		rewrite_by_lua '
-     local random = ngx.var.cookie_NOONLY_KEY
-     if (random == nil) then
-         return ngx.redirect("/auth_token?url=" .. ngx.var.request_uri)
-     end
-     local token = ngx.md5("Ntoken" .. random .. ngx.var.remote_addr .. random)
-     if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
-         return ngx.redirect("/auth_token?url=".. ngx.var.request_uri)
-     end
-';
-
-		 rewrite ^(.*)$ /admin/login.html last;
-}
+		limit_req zone=session_limit burst=5;
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_token_check.lua";
+		rewrite ^(.*)$ /admin/login.html last;
+	}
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
-     rewrite_by_lua '
-     local random = ngx.var.cookie_NOONLY_KEY
-     if (random == nil) then
-         return ngx.redirect("/auth_token?url=" .. ngx.var.request_uri)
-     end
-     local token = ngx.md5("Ntoken" .. random .. ngx.var.remote_addr .. random)
-     if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
-         return ngx.redirect("/auth_token?url=".. ngx.var.request_uri)
-     end
-';
+		limit_req zone=session_limit burst=5;
+		{{ if .Tags.Contains "tomcat" }}rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";{{end}}
 		proxy_pass http://{{.Name}};
 		client_max_body_size    1000m;
   	}
 	{{end}}{{end}}
 
 	location /auth_token {
-     if ($arg_url = "") {
-         return 403;
-     }
-     access_by_lua '
-         local random = math.random(9999)
-         local token = ngx.md5("Ntoken" .. random .. ngx.var.remote_addr .. random)
-         if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
-             ngx.header["Set-Cookie"] = {"NOONLY_ACCESS=" .. token, "NOONLY_KEY=" .. random}
-             return ngx.redirect(ngx.var.arg_url)
-         end
-     ';
-}
+     		if ($arg_url = "") {
+         		return 403;
+     		}
+     		access_by_lua '
+         		local random = ngx.md5(math.random(9999) .. os.time() .. math.random(9999))
+         		local token = ngx.md5("Ntoken" .. random .. ngx.var.remote_addr .. random)
+         		if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
+             			ngx.header["Set-Cookie"] = {"NOONLY_ACCESS=" .. token, "NOONLY_KEY=" .. random}
+             			return ngx.redirect(ngx.var.arg_url)
+         		end
+     		';
+	}
+
+     	location /redis {
+        	default_type 'text/html';
+        	access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_by_redis.lua";
+   	}
 }
