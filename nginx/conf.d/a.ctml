@@ -6,6 +6,11 @@
 
 server {
 	listen 80; 
+	
+	location ~* \.(html|css|js)$ {
+
+		return 503;
+	}
 
 	location =/ {
 		rewrite ^(.*)$ /admin/login.html last;

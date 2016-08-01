@@ -23,6 +23,7 @@ RUN cd /bin && \
 ADD 10-consul /etc/dnsmasq.d/10-consul
 ADD consul-template /bin/consul-template
 COPY dnsmasq.conf /etc/dnsmasq.conf
+ADD catalina.sh /usr/local/tomcat/bin/catalina.sh
 ADD manage.sh /manage.sh
 ADD server.xml /usr/local/tomcat/conf/server.xml
 

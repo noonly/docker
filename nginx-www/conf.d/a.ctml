@@ -12,13 +12,13 @@ server {
 
 
 	location =/ {
-		limit_req zone=session_limit burst=5;
+		#limit_req zone=session_limit burst=5;
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_token_check.lua";
-		rewrite ^(.*)$ /admin/login.html last;
+		#rewrite ^(.*)$ /admin/login.html last;
 	}
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
-		limit_req zone=session_limit burst=5;
+		#limit_req zone=session_limit burst=5;
 		{{ if .Tags.Contains "tomcat" }}rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";{{end}}
 		proxy_pass http://{{.Name}};

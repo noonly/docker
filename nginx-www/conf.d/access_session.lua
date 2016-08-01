@@ -1,5 +1,4 @@
-uri = {"/Login/web","Wednesday","Thursday","Friday","Saturday"  
-}  
+uri = {"/Login/web","Friday","Saturday"}  
 for i,v in ipairs(uri) do 
 if (ngx.var.uri == v) then
 	return
@@ -17,4 +16,4 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 		return
 	end
 end
-return ngx.redirect("/")
+ngx.exit(403)
