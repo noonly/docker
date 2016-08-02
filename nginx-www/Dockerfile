@@ -31,7 +31,7 @@ rm -f openresty-*.tar.gz && \
   cd openresty-1.9.15.1 && \
 #RUN cd / && unzip v0.10.6rc1.zip && tar zxvf nginx-1.4.4.tar.gz && cd nginx-1.4.4 && \
 ./configure --with-pcre-jit && \
-make -j2 && make install && \
+make -j8 && make install && \
 ln -s /etc/nginx/nginx/sbin/nginx /usr/local/bin/nginx && mkdir -p /usr/local/openresty/nginx/conf/conf.d
 
 ADD nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
