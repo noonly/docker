@@ -23,6 +23,7 @@ server {
 	}
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
+		add_header Cache-Control no-store;
 		#limit_req zone=session_limit burst=5;
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";
