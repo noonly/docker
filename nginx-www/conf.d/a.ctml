@@ -10,11 +10,11 @@ limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=100r/s;
 server {
 	listen 80; 
 
-	location ~* \.(css|js|png|jpg) {
-		limit_req zone=session_limit burst=5;
-		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
-		proxy_pass http://public;
-	}
+	#location ~* \.(css|js|png|jpg|woff|ttf) {
+	#	limit_req zone=session_limit burst=5;
+	#	rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+	#	proxy_pass http://public;
+	#}
 
 	location =/ {
 		#limit_req zone=session_limit burst=5;
@@ -24,8 +24,8 @@ server {
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
 		#limit_req zone=session_limit burst=5;
-		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
-		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";
+		{{ if .Tags.Contains "tomcat" }}rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";{{end}}
 		proxy_pass http://{{.Name}};
 		client_max_body_size    1000m;
   	}
