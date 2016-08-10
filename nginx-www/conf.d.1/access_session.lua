@@ -1,6 +1,5 @@
 uri = {"/Login/web","/admin/login.html"}  
 for i,v in ipairs(uri) do 
-	ngx.log(ngx.ERR, v.."++++++++++++++++++++++++++++"..ngx.var.uri)
 	if (ngx.var.uri == v) then
 		return
 	end
@@ -19,9 +18,7 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 		ngx.req.set_header("user", res)
 		--cache:close()
 		--return
-		ngx.log(ngx.ERR, "no session------------------------------------"..res);
 	else
-		 ngx.log(ngx.ERR, "no session------------------------------------");
 		ngx.exit(403)
 	end
 	cache:set_keepalive(10000, 100)
