@@ -1,24 +1,57 @@
-#! /bin/bash
+#! /bin/sh
+
 if [ ];then
 sudo apt-get install dnsmasq
 sudo mkdir -p /etc/dnsmasq.d/
 echo "server=/consul/127.0.0.1#8600" | sudo tee -a /etc/dnsmasq.d/10-consul
 fi
-
-wget http://apache.fayea.com/tomcat/tomcat-8/v8.5.4/bin/apache-tomcat-8.5.4.zip
-read -p "How match tomcat do you want to startup[>=1]?" c
+if [ ! -e "./apache-tomcat-8.5.4.zip" ]; then
+	wget http://apache.fayea.com/tomcat/tomcat-8/v8.5.4/bin/apache-tomcat-8.5.4.zip
+fi
+if [ ! -d "./apache-tomcat-8.5.4" ]; then
+	unzip apache-tomcat-8.5.4.zip
+fi
+path=`pwd`
+mkdir -p "$parh/config/"
+c=1;
+for folder in `ls ./`
+do
+	if [ -d $path"/"$folder"/WebRoot" ]; then
+		if [ -f $path"/"$folder"/WebRoot/service.conf" ]; then
+			cp $path"/"$folder"/WebRoot/*.json $parh/config/"
+			cp -R apache-tomcat-8.5.4 tomcat"_$folder"
+			sed -i "s/Connector port=\"8080\"/Connector port=\"880$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			sed -i "s/Server port=\"8005\"/Server port=\"700$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			sed -i "s/Connector port=\"8009\"/Connector port=\"890$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			p=$path"/"$folder"/WebRoot"
+			sed -i "s/ autoDeploy=\"true\">/<Context docBase=\"$p\" path="" reloadable=\"true\" source=\"$p\"/>/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			c=$(($c-1))
+		fi
+	fi
+done
+if [ ]; then
+c=`ls $parh/config/*.json | wc -l`
+#read -p "How match tomcat do you want to startup[>=1]?" c
 while [ "_$c" != "_0" ]
 do
-	unzip apache-tomcat-8.5.4.tar.gz tomcat"_$c"
-	sed -i "s/Connector port=\"8080\"/Connector port=\"880$c\"/g" ./tomcat"_$c"/config/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+	cp -R apache-tomcat-8.5.4 tomcat"_$c"
+	sed -i "s/Connector port=\"8080\"/Connector port=\"880$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+	sed -i "s/Server port=\"8005\"/Server port=\"700$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+	sed -i "s/Connector port=\"8009\"/Connector port=\"890$c\"/g" ./tomcat"_$c"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
 	c=$(($c-1))
 done
-
-if [ ];then
+fi
+y="y"
+read -p "Do you want to startup consul service[Y/n]?" y
+if [ "_$y" == "_y" ];then
 wget https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip
 unzip consul_0.6.4_linux_amd64.zip
 sudo mkdir -p /etc/consul.d
 
-sudo nohup consul agent -join 10.0.0.7 -data-dir /tmp -config-dir /etc/consul.d &
+sudo nohup consul agent -join 10.0.0.7 -data-dir /tmp -config-dir "$parh/config/" &
+
+sudo apt-get install dnsmasq
+sudo mkdir -p /etc/dnsmasq.d/
+echo "server=/consul/127.0.0.1#8600" | sudo tee -a /etc/dnsmasq.d/10-consul
 
 fi
