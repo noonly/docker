@@ -48,17 +48,24 @@ do
 	fi
 done
 echo $c > $path/c.txt
-y="y"
-read -p "Do you want to startup consul service[Y/n]?" y
-if [ "_$y" == "_y" ]; then
-wget https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip
-unzip consul_0.6.4_linux_amd64.zip
-sudo mkdir -p /etc/consul.d
 
-sudo nohup ./consul agent -join 10.0.0.7 -data-dir /tmp -config-dir $path/config/ &
+process=`ps -aux | grep "./consul " | grep -v grep | awk '{print $2}'`
+if [ "_$process" == "_" ]; then
+	y="y"
+	read -p "Do you want to startup consul service[Y/n]?" y
+	if [ "_$y" == "_y" ]; then
+		wget https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip
+		unzip consul_0.6.4_linux_amd64.zip
+		sudo mkdir -p /etc/consul.d
 
-sudo apt-get install dnsmasq
-sudo mkdir -p /etc/dnsmasq.d/
-echo "server=/consul/127.0.0.1#8600" | sudo tee -a /etc/dnsmasq.d/10-consul
+		nohup ./consul agent -join 10.0.0.7 -data-dir /tmp -config-dir $path/config/ &
 
+		sudo apt-get install dnsmasq
+		sudo mkdir -p /etc/dnsmasq.d/
+		echo "server=/consul/127.0.0.1#8600" | sudo tee -a /etc/dnsmasq.d/10-consul
+
+	fi
+else
+	sudo kill $process
+	nohup ./consul agent -join 10.0.0.7 -data-dir /tmp -config-dir $path/config/ &
 fi
