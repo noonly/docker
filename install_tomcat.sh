@@ -1,5 +1,13 @@
 #! /bin/bash
 
+if [ ! -e "./apache-tomcat-8.5.4.zip" ]; then
+        wget http://apache.fayea.com/tomcat/tomcat-8/v8.5.4/bin/apache-tomcat-8.5.4.zip
+fi
+
+if [ ! -d "./apache-tomcat-8.5.4" ]; then
+        unzip apache-tomcat-8.5.4.zip
+fi
+
 path=`pwd`
 mkdir -p "$path/config/"
 c=1;
