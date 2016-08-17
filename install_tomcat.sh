@@ -38,9 +38,9 @@ do
 			done
 			cd $path
 			cp -R apache-tomcat-8.5.4 tomcat"_$folder"
-			sed -i "s/Connector port=\"8080\"/Connector port=\"$((880+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
-			sed -i "s/Server port=\"8005\"/Server port=\"$((700+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
-			sed -i "s/Connector port=\"8009\"/Connector port=\"$((890+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			sed -i "s/Connector port=\"8080\"/Connector port=\"$((8800+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			sed -i "s/Server port=\"8005\"/Server port=\"$((7000+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
+			sed -i "s/Connector port=\"8009\"/Connector port=\"$((8900+$c))\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
 			p="$path/$folder/WebRoot"
 			sed -i "s#autoDeploy=\"true\">#autoDeploy=\"true\"><Context docBase=\"$p\" path=\"\" reloadable=\"true\" source=\"$p\"\/>#g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
 			c=$(($c+1))
