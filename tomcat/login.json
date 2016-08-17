@@ -9,7 +9,7 @@
          "port":8080,
          "check":{
              "name":"status",
-             "tcp":"localhost:8080",
+             "http":"http://localhost:8080/AccessInterface/isAuth",
              "interval":"30s"
          }
      }
