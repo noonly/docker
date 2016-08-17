@@ -44,6 +44,10 @@ do
 			p="$path/$folder/WebRoot"
 			sed -i "s#autoDeploy=\"true\">#autoDeploy=\"true\"><Context docBase=\"$p\" path=\"\" reloadable=\"true\" source=\"$p\"\/>#g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
 			c=$(($c+1))
+			cd ./tomcat"_$folder"/bin/
+			chmoe 755 ./*
+			nohup ./startup.sh &
+			cd $path
 		fi
 	fi
 done
@@ -66,6 +70,6 @@ if [ "_$process" == "_" ]; then
 
 	fi
 else
-	sudo kill $process
+	kill $process
 	nohup ./consul agent -join 10.0.0.7 -data-dir /tmp -config-dir $path/config/ &
 fi
