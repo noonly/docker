@@ -44,7 +44,7 @@ wget https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip
 unzip consul_0.6.4_linux_amd64.zip
 sudo mkdir -p /etc/consul.d
 
-sudo nohup consul agent -join 10.0.0.7 -data-dir /tmp -config-dir "$parh/config/" &
+sudo nohup ./consul agent -join 10.0.0.7 -data-dir /tmp -config-dir $path/config/ &
 
 sudo apt-get install dnsmasq
 sudo mkdir -p /etc/dnsmasq.d/
