@@ -20,6 +20,10 @@ do
 			do
 				cp $json $path/config/
 				sed -i "s/8080/880$c/g" $path/config/$json
+				sed -i "s#123456#xiaole001#g" ./WEB-INF/classes/jdbcDataSource.xml
+				sed -i "s#libuser.service.dc1.consul#node1#g" ./WEB-INF/classes/jdbcDataSource.xml
+				sed -i "s#libexam.service.dc1.consul#node1#g" ./WEB-INF/classes/jdbcDataSource.xml
+				sed -i "s#libmessage.service.dc1.consul#node1#g" ./WEB-INF/classes/jdbcDataSource.xml
 			done
 			cd $path
 			cp -R apache-tomcat-8.5.4 tomcat"_$folder"
