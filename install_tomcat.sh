@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [ ];then
 sudo apt-get install dnsmasq
@@ -24,7 +24,15 @@ do
                                 continue
                         fi
 
-			cp "$path/$folder/WebRoot/*.json $path/config/"
+			#cp $path/$folder/WebRoot/*.json $path/config/
+			
+			cd $path/$folder/WebRoot/
+			for json in `ls *.json`
+			do
+				cp $json $path/config/
+				sed -i "s/8080/880$c/g" $path/config/$json
+			done
+			cd $path
 			cp -R apache-tomcat-8.5.4 tomcat"_$folder"
 			sed -i "s/Connector port=\"8080\"/Connector port=\"880$c\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
 			sed -i "s/Server port=\"8005\"/Server port=\"700$c\"/g" ./tomcat"_$folder"/conf/server.xml #`grep -tl ./tomcat"_$c"/config/server.xml`
