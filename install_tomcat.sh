@@ -10,7 +10,10 @@ fi
 
 path=`pwd`
 mkdir -p "$path/config/"
-c=1;
+c=`cat $path/c.txt 2> /dev/null`
+if [ "_$c" == "_" ]; then
+	c=1
+fi
 for folder in `ls ./`
 do
 	if [ -d $path"/"$folder"/WebRoot" ]; then
@@ -44,7 +47,7 @@ do
 		fi
 	fi
 done
-
+echo $c > $path/c.txt
 y="y"
 read -p "Do you want to startup consul service[Y/n]?" y
 if [ "_$y" == "_y" ]; then
