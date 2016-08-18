@@ -1,4 +1,8 @@
-limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=100r/s;
+limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=300r/s;
+limit_req_zone $binary_remote_addr zone=token_limit:30m rate=200r/s;
+
+proxy_temp_path /tmp/proxy_temp_dir;
+proxy_cache_path /data/proxy_cache_dirlevels=1:2 keys_zone=cache_one:200m inactive=1d max_size=30g;
 
 {{range services}}{{ if .Tags.Contains "web" }}upstream {{.Name}} {
 	least_conn;
@@ -9,11 +13,17 @@ limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=100r/s;
 
 server {
 	listen 80; 
+	location ~* \.mp4$ {
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+        	root /v/;
+		limit_rate 300k;
+	}
 
-	location ~* \.(css|js|png|jpg) {
+	location ~* \.(gif|css|js|png|jpg|woff) {
 		limit_req zone=session_limit burst=5;
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		proxy_pass http://public;
+		proxy_cache cache_one;
 	}
 
 	location =/ {
@@ -29,10 +39,13 @@ server {
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";
 		proxy_pass http://{{.Name}};
 		client_max_body_size    1000m;
+		proxy_cache cache_one;
+		limit_rate 50k;
   	}
 	{{end}}{{end}}
 
 	location /auth_token {
+		limit_req zone=token_limit burst=1;
      		if ($arg_url = "") {
          		return 403;
      		}
@@ -46,8 +59,9 @@ server {
      		';
 	}
 
-     	location /redis {
-        	default_type 'text/html';
-        	access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_by_redis.lua";
-   	}
+     	#location /redis {
+	#	limit_req zone=auth_limit burst=1;
+        #	default_type 'text/html';
+        #	access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_by_redis.lua";
+   	#}
 }
