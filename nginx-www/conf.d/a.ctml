@@ -4,6 +4,7 @@ limit_req_zone $binary_remote_addr zone=token_limit:30m rate=200r/s;
 proxy_temp_path /tmp/proxy_temp_dir;
 proxy_cache_path /tmp/proxy_cache_dirlevels=1:2 keys_zone=cache_one:200m inactive=1d max_size=30g;
 
+
 {{range services}}{{ if .Tags.Contains "web" }}upstream {{.Name}} {
 	least_conn;
 	{{range service .Name}}server  {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{else}}server 127.0.0.1:65535;
@@ -67,6 +68,14 @@ server {
 		limit_req zone=token_limit burst=1;
 		default_type 'text/html';
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/myprofile.lua";
+	}
+
+	location /upload {
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/test.lua";
+        }
+
+	location /data/ {
+		root /tmp/;
 	}
 
      	#location /redis {
