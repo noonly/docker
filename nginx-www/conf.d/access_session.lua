@@ -19,6 +19,7 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 		--cache:close()
 		--return
 	else
+		cache:set_keepalive(10000, 100)
 		ngx.exit(403)
 	end
 	cache:set_keepalive(10000, 100)
