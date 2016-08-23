@@ -9,30 +9,30 @@ cache:get_reused_times()
 
 if (ngx.var.cookie_NOONLYSESSION ~= nil) then
         local res = cache:get(ngx.var.cookie_NOONLYSESSION)
-        if res~=nil then
+        if type(res) == "string" then
                 cache:expire(ngx.var.cookie_NOONLYSESSION,"1200")
                 local obj = cjson.decode(res)
                 res = cache:get(obj.stdid)
                 cache:expire(obj.stdid,"12000")
                 ngx.say(res)
         else
-                ngx.exit(500)
+        --        ngx.exit(500)
         end
 else
 
         local stdid = ngx.var.arg_stdid
         if stdid == nil then
-                ngx.exit(503)
+        --        ngx.exit(503)
         end
         local profile = cache:get(stdid)
         if profile~=nil then
                 cache:expire(stdid,"12000")
                 ngx.say(profile)
         else
-                ngx.exit(503)
+        --        ngx.exit(503)
         end
 
 end
 cache:set_keepalive(10000, 100)
-ngx.exit(500)
+ngx.exit(200)
 
