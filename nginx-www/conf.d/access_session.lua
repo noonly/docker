@@ -1,9 +1,12 @@
-uri = {"/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Video/response","/Video/typeInfo","/Video/type","/Video/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"} 
-for i,v in ipairs(uri) do 
-	if (ngx.var.uri == v) then
-		return
-	end
-end 
+uri = {"/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Video/response","/Video/typeInfo","/Video/type","/Video/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"} 
+function allow_url(status)
+	for i,v in ipairs(uri) do 
+		if (ngx.var.uri == v) then
+			return
+		end
+	end 
+	ngx.exit(status)	
+end
 if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 	local redis = require "resty.redis"
 	local cache = redis.new()
@@ -20,11 +23,11 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 		--return
 	else
 		cache:set_keepalive(10000, 100)
-		ngx.exit(403)
+		allow_url(403)
 	end
 	cache:set_keepalive(10000, 100)
 	--cache:close()
 	--cache:set_keepalive(10000, 100)
 else
-	ngx.exit(403)
+	allow_url(401)
 end
