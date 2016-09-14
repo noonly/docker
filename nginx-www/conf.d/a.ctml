@@ -16,7 +16,7 @@ server {
 	listen 80; 
 	location ~* \.mp4$ {
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
-        	root /v/;
+        	root /video/;
 		limit_rate 350k;
 	}
 
@@ -30,7 +30,7 @@ server {
 	location =/ {
 		#limit_req zone=session_limit burst=5;
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_token_check.lua";
-		#rewrite ^(.*)$ /admin/login.html last;
+		#rewrite ^(.*)$ /zuxia/index.html last;
 	}
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
@@ -71,6 +71,8 @@ server {
 	}
 
 	location /upload {
+		default_type 'text/html';
+		client_max_body_size    1000m;
                 content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/test.lua";
         }
 
@@ -78,6 +80,27 @@ server {
 		root /tmp/;
 	}
 
+	location /v/ {
+                root /video/;
+        }
+
+	location /valid {
+                set $arg_c unkonw;
+                set $arg_flag "flag=sign";
+                limit_req zone=token_limit burst=1;
+                default_type 'text/html';
+                access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
+                proxy_pass http://172.17.0.29:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+        }
+
+        location /forgotPassword {
+                set $arg_c unkonw;
+                set $arg_flag "flag=forgot";
+                limit_req zone=token_limit burst=1;
+                default_type 'text/html';
+                access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
+                proxy_pass http://172.17.0.29:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+        }
      	#location /redis {
 	#	limit_req zone=auth_limit burst=1;
         #	default_type 'text/html';
