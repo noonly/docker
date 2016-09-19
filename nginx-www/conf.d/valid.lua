@@ -7,8 +7,8 @@ if ngx.var.arg_type ~= "sign" and ngx.var.arg_type ~= "auth" and ngx.var.arg_typ
         ngx.exit(200)
 end
 local pass = 0
-local codeuser = "code_" .. ngx.var.arg_username
-local timesuser = "times_" .. ngx.var.arg_username
+local codeuser = ngx.var.arg_flag .. "code_" .. ngx.var.arg_username
+local timesuser = ngx.var.arg_flag .. "times_" .. ngx.var.arg_username
 local redis = require "resty.redis"
 local cache = redis.new()
 cache:set_timeout(1000)
@@ -21,9 +21,10 @@ local usertimes = cache:get(timesuser)
 if ngx.var.arg_type == "auth" then
 	--send code
 	if  usertimes == ngx.null then
-		local code = math.random(999999)
+		math.randomseed(tostring(os.time()):reverse():sub(1, 6))
+		local code = math.random(899999)+100000
  	       	cache:set(codeuser,code)
-        	cache:expire(user,"1800")
+        	cache:expire(codeuser,"1800")
        	 	cache:set(timesuser,0)
         	cache:expire(timesuser,"60")
 		ngx.var.arg_c = "vcode="..code
@@ -54,6 +55,7 @@ if usercode ~= ngx.null then
 	if ngx.var.arg_code == nil or ngx.var.arg_code ~= usercode then
 		ngx.say("{\"status\":\"-5\",\"msg\":\"valid code wrong\"}")
 	else
+		cache:expire(codeuser,"5")
 		pass = 1
 	end
 	end

@@ -91,7 +91,7 @@ read -p "Please input ${projectname[$j]} project container name (default: node-$
 		echo "${projectname[$j]} starting"
 		if [ "_${projectname[$j]}" != '_all' ]; then
 			#$echo "${projectname[$j]} starting"
-			docker run -d --name "$n" --env CONSUL_HOST=$ip \
+			docker run -d --name "node-${projectname[$j]}" --hostname "node-${projectname[$j]}" --env CONSUL_HOST=$ip \
 -v $pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
@@ -107,7 +107,7 @@ echo "Starting container: ${projectname[$tmp]}"
 
 #--hostname tomcat-"node-${projectname[$tmp]}"
 
-docker run -d --name "$n" --env CONSUL_HOST=$ip \
+docker run -d --name "node-${projectname[$tmp]}" --hostname "node-${projectname[$tmp]}" --env CONSUL_HOST=$ip \
 -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \

@@ -2,7 +2,7 @@ local redis = require "resty.redis"
 local cjson = require "cjson"
 local cache = redis.new()
 cache:set_timeout(1000)
-cache.connect(cache, '192.168.4.193', '6379')
+cache.connect(cache, '172.17.0.3', '6379')
 --cache.set_timeout(1000)
 
 cache:get_reused_times()
@@ -13,7 +13,7 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
                 cache:expire(ngx.var.cookie_NOONLYSESSION,"1200")
                 local obj = cjson.decode(res)
                 res = cache:get(obj.stdid)
-                cache:expire(obj.stdid,"12000")
+                --cache:expire(obj.stdid,"12000")
                 ngx.say(res)
         else
         --        ngx.exit(500)
