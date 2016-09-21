@@ -95,6 +95,7 @@ read -p "Please input ${projectname[$j]} project container name (default: node-$
 -v $pro:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
+-v /etc/timezone:/etc/timezone:ro \
  noonly/tomcat-debug	
 		fi
 	j=$(($j+1))
@@ -111,6 +112,7 @@ docker run -d --name "node-${projectname[$tmp]}" --hostname "node-${projectname[
 -v ${project[$tmp]}:/project \
 -v $PWD/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
 -v /etc/localtime:/etc/localtime:ro \
+-v /etc/timezone:/etc/timezone:ro \
 noonly/tomcat-debug
 fi
 

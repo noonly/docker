@@ -48,6 +48,8 @@ while true do
                                suffix = "zip"
                       elseif res[2] == "text/plain" then
                                  suffix = "txt"
+		      elseif res[2] == "media/mp4" then
+                                 suffix = "mp4"
                       else
                               ngx.say('{"msg":"0","info","do not support this file type"}')
                               ngx.exit(200);
