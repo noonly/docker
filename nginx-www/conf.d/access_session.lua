@@ -1,4 +1,5 @@
-uri = {"/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
+uri = {"/Question/appNotIntercepor/practice","/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
+
 
 function allow_url(status)
         for i,v in ipairs(uri) do
@@ -18,19 +19,25 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
         cache:get_reused_times()
         local res = cache:get(ngx.var.cookie_NOONLYSESSION)
         if res~=ngx.null then
-		
+		local device = ngx.req.get_headers()["user-agent"]
+		if string.find(device,'iPhone') or string.find(device,'Android') then
+			cache:expire(ngx.var.cookie_NOONLYSESSION,"604800")
+        --		ngx.log(ngx.ERR,"iphone")
+	--		ngx.req.set_header("user", res)
+		else	
 		if type(res) == "string" then
 			local cjson = require "cjson"
                 	local obj = cjson.decode(res)
+
 			if obj.stdid ~= nil then
                 		cache:expire(obj.stdid,"1300")
 			end
 			cache:expire(ngx.var.cookie_NOONLYSESSION,"1200")
-	                ngx.req.set_header("user", res)
+	                --ngx.req.set_header("user", res)
 
 	        end
-
-
+		end
+		ngx.req.set_header("user", res)
                 --cache:close()
                 --return
         else
