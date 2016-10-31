@@ -50,6 +50,16 @@ while true do
                                  suffix = "txt"
 		      elseif res[2] == "media/mp4" then
                                  suffix = "mp4"
+		      elseif res[2] == "audio/mp3" then
+                                 suffix = "mp3"
+		      elseif res[2] == "media/wav" then
+                                 suffix = "wav"
+		      elseif res[2] == "media/amr" then
+                                 suffix = "amr"
+		      elseif res[2] == "image/gif" then
+                                 suffix = "gif"
+		       elseif res[2] == "video/mp4" then
+                                 suffix = "mp4"
                       else
                               ngx.say('{"msg":"0","info","do not support this file type"}')
                               ngx.exit(200);
