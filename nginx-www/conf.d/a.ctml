@@ -1,4 +1,4 @@
-limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=300r/s;
+limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=10r/s;
 limit_req_zone $binary_remote_addr zone=token_limit:30m rate=200r/s;
 
 proxy_temp_path /tmp/proxy_temp_dir;
@@ -13,6 +13,9 @@ proxy_cache_path /tmp/proxy_cache_dirlevels=1:2 keys_zone=cache_one:200m inactiv
 {{end}}{{end}}
 
 server {
+	error_page 404 = /zuxia/404.html; 
+        error_page 401 = /zuxia/404.html;
+        error_page 403 = /zuxia/404.html;
 	listen 80; 
 	location ~* \.mp4$ {
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
@@ -20,11 +23,12 @@ server {
 		limit_rate 350k;
 	}
 
-	location ~* \.(cur|gif|css|js|png|jpg|woff) {
-		limit_req zone=session_limit burst=5;
-		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+	location ~* \.(cur|gif|css|js|png|jpg|woff|apk) {
+		##limit_req zone=session_limit burst=5;
+		#rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		proxy_pass http://public;
 		proxy_cache cache_one;
+		limit_rate 200k;
 	}
 
 	location =/ {
@@ -35,7 +39,7 @@ server {
 
 	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
 		add_header Cache-Control no-store;
-		#limit_req zone=session_limit burst=5;
+		limit_req zone=session_limit burst=15;
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";
 		proxy_pass http://{{.Name}};
@@ -46,7 +50,7 @@ server {
 	{{end}}{{end}}
 
 	location /auth_token {
-		limit_req zone=token_limit burst=1;
+		##limit_req zone=token_limit burst=1;
      		if ($arg_url = "") {
          		return 403;
      		}
@@ -65,7 +69,7 @@ server {
 	}
 	
 	location /myprofile {
-		limit_req zone=token_limit burst=1;
+		##limit_req zone=token_limit burst=1;
 		default_type 'text/html';
 		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/myprofile.lua";
 	}
@@ -87,7 +91,7 @@ server {
 	location /valid {
                 set $arg_c unkonw;
                 set $arg_flag "flag=sign";
-                limit_req zone=token_limit burst=1;
+                ##limit_req zone=token_limit burst=1;
                 default_type 'text/html';
                 access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
                 proxy_pass http://172.17.0.29:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
