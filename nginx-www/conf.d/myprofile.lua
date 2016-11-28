@@ -2,7 +2,7 @@ local redis = require "resty.redis"
 local cjson = require "cjson"
 local cache = redis.new()
 cache:set_timeout(1000)
-cache.connect(cache, '172.17.0.3', '6379')
+cache.connect(cache, '172.17.0.4', '6379')
 --cache.set_timeout(1000)
 
 cache:get_reused_times()

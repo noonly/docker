@@ -1,4 +1,4 @@
-limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=10r/s;
+limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=4r/s;
 limit_req_zone $binary_remote_addr zone=token_limit:30m rate=200r/s;
 
 proxy_temp_path /tmp/proxy_temp_dir;
@@ -17,6 +17,9 @@ server {
         error_page 401 = /zuxia/404.html;
         error_page 403 = /zuxia/404.html;
 	listen 80; 
+      	if ($host = 'www.noonly.com' ) {
+         	rewrite ^/(.*)$ http://edu.cqzuxia.com/$1 permanent;
+        }
 	location ~* \.mp4$ {
 		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
         	root /video/;
@@ -94,7 +97,7 @@ server {
                 ##limit_req zone=token_limit burst=1;
                 default_type 'text/html';
                 access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
-                proxy_pass http://172.17.0.29:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+                proxy_pass http://172.17.0.27:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
         }
 
         location /forgotPassword {
@@ -103,7 +106,7 @@ server {
                 limit_req zone=token_limit burst=1;
                 default_type 'text/html';
                 access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
-                proxy_pass http://172.17.0.29:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+                proxy_pass http://172.17.0.27:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
         }
      	#location /redis {
 	#	limit_req zone=auth_limit burst=1;

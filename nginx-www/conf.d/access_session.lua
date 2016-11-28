@@ -1,4 +1,4 @@
-uri = {"/afterLoginController/afterLogin","/appMessage/QueryMedia","/appMessage/QueryOneMeadia","/appMessage/QueryLikesAndReplys","/appMessage/htCircle","/zuxia/cinfo.html","/zuxia/schedule.html","/Question/appNotIntercepor/practice","/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
+uri = {"/Weekly/lectureList","/public/zuxiaketang.exe","/Weekly/groupList","/Weekly/followMediaInfoUserList","/Weekly/followMediaInfo","/zuxia/app/subscribe.html","/appMessage/WebRdcircle","/zuxia/moment.html","/zuxia/down.html","/afterLoginController/afterLogin","/appMessage/QueryMedia","/appMessage/QueryOneMeadia","/appMessage/QueryLikesAndReplys","/appMessage/htCircle","/zuxia/cinfo.html","/zuxia/schedule.html","/Question/appNotIntercepor/practice","/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
 
 
 function allow_url(status)
@@ -13,7 +13,7 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
         local redis = require "resty.redis"
         local cache = redis.new()
         cache:set_timeout(1000)
-        cache.connect(cache, '172.17.0.3', '6379')
+        cache.connect(cache, '172.17.0.4', '6379')
         --cache.set_timeout(1000)
 
         cache:get_reused_times()

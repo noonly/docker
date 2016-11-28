@@ -19,12 +19,14 @@ RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC64107
 	&& rm -rf /var/lib/apt/lists/*
 
 ADD ./nginx.conf /etc/nginx/nginx.conf
-ADD ./default.conf /etc/nginx/conf.d/default.conf
+#ADD ./default.conf /etc/nginx/conf.d/default.conf
+#ADD ./1_edu.cqzuxia.com_bundle.crt /etc/nginx/conf.d/1_edu.cqzuxia.com_bundle.crt;
+#ADD ./server.key.un /etc/nginx/conf.d/server.key.un;
 
 # forward request and error logs to docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-EXPOSE 80 443
+EXPOSE 7186
 
 CMD ["nginx", "-g", "daemon off;"]
