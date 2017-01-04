@@ -26,7 +26,7 @@ server {
 		limit_rate 350k;
 	}
 
-	location ~* \.(cur|gif|css|js|png|jpg|woff|apk) {
+	location ~* \.(cur|gif|css|js|png|jpg|woff|apk|txt) {
 		##limit_req zone=session_limit burst=5;
 		#rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
 		proxy_pass http://public;
@@ -83,6 +83,12 @@ server {
                 content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/test.lua";
         }
 
+	location /uploading {
+                default_type 'text/html';
+                client_max_body_size    1000m;
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/test1.lua";
+        }
+
 	location /data/ {
 		root /tmp/;
 	}
@@ -97,7 +103,7 @@ server {
                 ##limit_req zone=token_limit burst=1;
                 default_type 'text/html';
                 access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
-                proxy_pass http://172.17.0.27:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+                proxy_pass http://172.17.0.32:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
         }
 
         location /forgotPassword {
@@ -106,11 +112,90 @@ server {
                 limit_req zone=token_limit burst=1;
                 default_type 'text/html';
                 access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/valid.lua";
-                proxy_pass http://172.17.0.27:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
+                proxy_pass http://172.17.0.32:9090/plugins/createStd/createstudents?$args&$arg_c&$arg_flag;
         }
+
      	#location /redis {
 	#	limit_req zone=auth_limit burst=1;
         #	default_type 'text/html';
         #	access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_by_redis.lua";
    	#}
+
+	location /hotpoint {
+                add_header Cache-Control no-store;
+                #expires 1s;
+                set $arg_img "";
+                access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/hotpoint.lua";
+                proxy_pass http://127.0.0.1/zuxia/public/img/$arg_img;
+        }
+
+        location /images/ {
+                rewrite ^/(.*)$ http://edu.cqzuxia.com:8020/$1 permanent;
+        }
+
+	#location /appMessage/Reply {
+        #       proxy_pass http://127.0.0.1/appMessage/Reply?$args;
+        #}
+
+	location =/Login/displayAvatar {
+                default_type 'image/jpg';
+                add_header Cache-Control public;
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/filter.lua";
+        }
+
+        location /java/ {
+                #rewrite /Login/displayAvatar $2 break;
+                proxy_pass http://Login/Login/;
+        }
+
+	location =/appMessage/hotnews {
+                default_type 'text/json';
+                set $arg_callback "/javaBackend";
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/backend2.lua";
+        }
+
+        location =/javaBackend {
+                proxy_pass http://appMessage/appMessage/hotnews?$args;
+        }
+
+        location =/appMessage/htCircle {
+                default_type 'text/json';
+                set $arg_callback "/htCircle";
+                set $arg_expire "60";
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/backend.lua";
+        }
+
+        location =/htCircle {
+                proxy_pass http://appMessage/appMessage/htCircle?$args;
+        }
+	
+	location =/appMessage/like {
+                default_type 'text/html';
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/like2.lua";
+        }
+
+	location =/init {
+		default_type 'text/html';
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/init.lua";
+	}
+
+	location =/initcircle {
+                default_type 'text/json';
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/redis_script.lua";
+        }
+
+	location =/Login/userAvatar {
+                default_type 'image/jpg';
+                add_header Cache-Control public;
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/vcard.lua";
+        }
+
+        location =/initscript {
+                default_type 'text/json';
+                content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/init_script.lua";
+        }
+	location =/initmgroup {
+		default_type 'text/json';
+		content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/redis_mgroup.lua";
+	}
 }

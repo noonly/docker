@@ -181,7 +181,7 @@ if [ "_$y" == "_y" ]; then
 	#run nginx 
 	docker run -d --name $tmp --hostname $tmp -v $BASEDIR/nginx/conf.d/:/etc/nginx/conf.d/:rw -v /etc/localtime:/etc/localtime:ro --env CONSUL_HOST=$CONSUL_IP noonly/nginx
 	docker run -d --name admin --hostname admin -v /var/lib/git/index:/usr/share/nginx/html/ -v /etc/localtime:/etc/localtime:ro --env CONSUL_HOST=$CONSUL_IP noonly/www1
-	docker run -d --name wwwroot --hostname wwwroot -p 80:80 -p 443:443 -v /var/data/image/:/img/ -v /var/data/video/:/video/ -v /docker/nginx-www/conf.d/:/usr/local/openresty/nginx/conf/conf.d/:rw --env CONSUL_HOST=$CONSUL_IP noonly/www
+	docker run -d --name wwwroot --hostname wwwroot -p 80:80 -p 443:443 -v /var/data/image/:/img/ -v /var/data/video/:/video/ -v /docker/nginx-www/conf.d/:/usr/local/openresty/nginx/conf/conf.d/:rw -v /etc/localtime:/etc/localtime:ro -v /etc/timezone:/etc/timezone:ro  --env CONSUL_HOST=$CONSUL_IP noonly/www
 
 	tmp=""
 fi

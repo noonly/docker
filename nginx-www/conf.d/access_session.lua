@@ -1,4 +1,4 @@
-uri = {"/Weekly/lectureList","/public/zuxiaketang.exe","/Weekly/groupList","/Weekly/followMediaInfoUserList","/Weekly/followMediaInfo","/zuxia/app/subscribe.html","/appMessage/WebRdcircle","/zuxia/moment.html","/zuxia/down.html","/afterLoginController/afterLogin","/appMessage/QueryMedia","/appMessage/QueryOneMeadia","/appMessage/QueryLikesAndReplys","/appMessage/htCircle","/zuxia/cinfo.html","/zuxia/schedule.html","/Question/appNotIntercepor/practice","/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
+uri = {"/Medias/typesuBset","/visit/login.html","/appMessage/addMessageRead","/indexController/weiBoLogin","/afterLoginController/weiBoLogin","/public/zuxiaketang.apk","/Weekly/lectureList","/public/zuxiaketang.exe","/Weekly/groupList","/Weekly/followMediaInfoUserList","/Weekly/followMediaInfo","/zuxia/app/subscribe.html","/appMessage/WebRdcircle","/zuxia/moment.html","/zuxia/down.html","/afterLoginController/afterLogin","/appMessage/QueryMedia","/appMessage/QueryOneMeadia","/appMessage/QueryLikesAndReplys","/appMessage/htCircle","/zuxia/cinfo.html","/zuxia/schedule.html","/Question/appNotIntercepor/practice","/public/zuxiaketang.apk","/zuxia/forget.html","/indexController/appWBLogin","/Login/outRegster","/appMessage/QueryMessage","/appMessage/QueryReplayOrLike","/indexController/login","/indexController/appQQLogin","/appMessage/LiveList","/Medias/aboutHot","/Login/appQQLogin","/Login/displayAvatar","/appMessage/QueryCircleMsg","/appMessage/QueryCircleTopMsg","/appMessage/OneCircle","/myprofile","/zuxia/exam.html","/Login/regster","/admin/register.html","/appMessage/hotnews","/appMessage/QueryCircleMsg","/appMessage/rdcircle","/zuxia/member.html","/zuxia/app.html","/zuxia/play.html","/Medias/response","/Medias/typeInfo","/Medias/type","/Medias/limitType","/zuxia/video.html","/zuxia/circle.html","/zuxia/index.html","/Login/web","/admin/login.html","/Back/BackOne","/Back/BackTwo","/Back/BackThree","/Back/BackFour"}
 
 
 function allow_url(status)
@@ -7,6 +7,7 @@ function allow_url(status)
                         return
                 end
         end
+--	ngx.redirect('/',status)
         ngx.exit(status)
 end
 if (ngx.var.cookie_NOONLYSESSION ~= nil) then
@@ -32,7 +33,7 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 			if obj.stdid ~= nil then
                 		cache:expire(obj.stdid,"1300")
 			end
-			cache:expire(ngx.var.cookie_NOONLYSESSION,"1200")
+			cache:expire(ngx.var.cookie_NOONLYSESSION,"2400")
 	                --ngx.req.set_header("user", res)
 
 	        end
@@ -50,4 +51,3 @@ if (ngx.var.cookie_NOONLYSESSION ~= nil) then
 else
         allow_url(401)
 end
-

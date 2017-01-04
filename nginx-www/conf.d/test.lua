@@ -30,8 +30,15 @@ while true do
         if typ == "header" then
                 if res[1] ~= "Content-Type" then
                         local filename = get_filename(res[2]);
-                        --suffix = getExtension(filename)
-                        file_name = "/img/".. ngx.md5(math.random(9999) .. ngx.var.remote_addr .. math.random(9999)) --my_get_file_name(res)
+			if filename then
+				suffix = getExtension(filename)
+			end
+			if suffix == nil then
+				suffix = ""
+			else
+				suffix = "." .. suffix
+			end
+                        file_name = "/img/".. ngx.md5(math.random(9999) .. ngx.var.remote_addr .. math.random(9999))
                         if file_name then
                                 file = io.open(file_name, "w+")
                                 if not file then
@@ -41,28 +48,28 @@ while true do
                         end
                 else
                       if res[2] == "image/jpeg" then
-                              suffix = "jpg"
+                              suffix = ".jpg"
                       elseif  res[2] == "image/png" then
-                              suffix = "png"
+                              suffix = ".png"
                       elseif res[2] == "application/x-zip-compressed" then
-                               suffix = "zip"
+                               suffix = ".zip"
                       elseif res[2] == "text/plain" then
-                                 suffix = "txt"
+                                 suffix = ".txt"
 		      elseif res[2] == "media/mp4" then
-                                 suffix = "mp4"
+                                 suffix = ".mp4"
 		      elseif res[2] == "audio/mp3" then
-                                 suffix = "mp3"
+                                 suffix = ".mp3"
 		      elseif res[2] == "media/wav" then
-                                 suffix = "wav"
+                                 suffix = ".wav"
 		      elseif res[2] == "media/amr" then
-                                 suffix = "amr"
+                                 suffix = ".amr"
 		      elseif res[2] == "image/gif" then
-                                 suffix = "gif"
+                                 suffix = ".gif"
 		       elseif res[2] == "video/mp4" then
-                                 suffix = "mp4"
-                      else
-                              ngx.say('{"msg":"0","info","do not support this file type"}')
-                              ngx.exit(200);
+                                 suffix = ".mp4"
+                      --elseif suffix == nil then
+                      --        ngx.say('{"msg":"0","info","do not support this file type"}')
+                      --        ngx.exit(200);
                       end
                 end
         elseif typ == "body" then
@@ -77,9 +84,9 @@ while true do
                 local sha1_sum = sha1:final()
                 sha1:reset()
                 local shasum = str.to_hex(sha1_sum)
-                os.rename(file_name,"/img/"..shasum .. "."..suffix)
+                os.rename(file_name,"/img/"..shasum .. suffix)
                 --ngx.say(file_name,"/tmp/"..shasum .. "."..suffix)
-                ngx.say('{"msg":"1","name":"'..shasum ..'.'..suffix..'","type":"'..suffix..'"}')
+                ngx.say('{"msg":"1","name":"'..shasum .. suffix..'","type":"'..suffix..'"}')
         elseif typ == "eof" then
                 break
 
