@@ -56,6 +56,8 @@ if res==ngx.null then
 		res = resp.body
         	cache:set(key,res)
        		cache:expire(key,expire)
+	else
+		ngx.exit(404)
 	end
 
 end

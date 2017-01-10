@@ -87,6 +87,7 @@ local mgroup = [[
 		local all = redis.call("smembers","usermgroup:"..KEYS[1])
 		local bulk
 		local nextkey
+		local t = {}
 		for k,v in pairs(all) do
 			r = {}
 			bulk = redis.call('HGETALL',"mgroup:"..v)
@@ -100,20 +101,45 @@ local mgroup = [[
 			bulk = redis.call("get","unread:"..KEYS[1]..":"..v)
 			if bulk then
 				r.noreadcount = tonumber(r.allcount) - tonumber(redis.call("get","unread:"..KEYS[1]..":"..v))
-					
 			else
-				r.noreadcount = 0
+				r.noreadcount = tonumber(r.allcount)
 			end
-			--if r.noreadcount > 0 then
-                        --	table.insert(res,1,r)
-                        --else
-			--	table.insert(res,r)
-			--end
-			res[k] = r
+			r.isadd = true
+			if r.noreadcount > 0 then
+                        	table.insert(t,r)
+                        else
+				table.insert(res,r)
+			end
+			--res[k] = r
 		end
-		table.sort(res, function(a,b) if tonumber(a.noreadcount) > 0 then return true else if tonumber(b.noreadcount) > 0 then return false; end; end; return tonumber(a.alluser)>tonumber(b.alluser) end )
+		table.sort(res, function(a,b) return tonumber(a.alluser)>tonumber(b.alluser) end )
+		for _,v in pairs(t) do
+			table.insert(res,1,v)
+		end
+		--table.sort(res, function(a,b) return ((a.noreadcount == 0 and b.noreadcount == 0) and a.alluser > b.alluser) or (a.noreadcount ~= 0 and b.noreadcount == 0) or ((a.noreadcount ~= 0 and b.noreadcount ~= 0) and a.noreadcount > b.noreadcount) end)
 		result['mgroup'] = res
 	else
+		result['countnew'] = 0
+                result.status = 1
+                local all = redis.call("smembers","usermgroup:43EFCCF658C3B8D1")
+                local bulk
+                local nextkey
+                for k,v in pairs(all) do
+                        r = {}
+                        bulk = redis.call('HGETALL',"mgroup:"..v)
+                        for i, v in ipairs(bulk) do
+                                if i % 2 == 1 then
+                                        nextkey = v
+                                else
+                                        r[nextkey] = v
+                                end
+                        end
+			r.noreadcount = 0
+			r.isadd = false
+                        res[k] = r
+                end
+                table.sort(res, function(a,b) return tonumber(a.alluser)>tonumber(b.alluser) end )
+                result['mgroup'] = res
 		
 	end
 

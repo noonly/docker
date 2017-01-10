@@ -46,11 +46,16 @@ if ngx.var.arg_msgid ~= nil then
                     password = "123456",
 		    max_packet_size = 1024 * 1024 }
 
+	if not ok then
+                  ngx.log(ngx.ERR,"bad result: "..err..": "..errcode)
+                  return
+          end
+
 	--ngx.log(ngx.ERR,err)
 --	local code = math.random(9)+1
 	local res, err, errcode, sqlstate = db:query("UPDATE `app_noonly`.`studentmessage` SET `read`=`read`+1 WHERE `id`='"..ngx.var.arg_msgid.."';")
 	if not res then
-        	ngx.log(ngx.ERR,"bad result: "..err..": "..errcode..": "..sqlstate..".")
+        	ngx.log(ngx.ERR,"bad result: "..err..": ")
 		return
 	end
 	--SELECT `messageType` as type, count(`messageType`) as count  FROM app_noonly.studentmessage where `replyid`='96418235184273709'  and `time` > date_sub(curdate(),interval 7 day) group by `messagetype` ;
@@ -63,7 +68,7 @@ if ngx.var.arg_msgid ~= nil then
 	--res, err, errcode, sqlstate = db:query("SELECT count(*) as c FROM app_noonly.studentmessage where `replyid`='"..ngx.var.arg_msgid.."' and `messageType`='reply' and `time` > date_sub(curdate(),interval 7 day);")
 
 if not res then
-	ngx.log(ngx.ERR,"bad result: "..err..": "..errcode..": "..sqlstate..".")
+	ngx.log(ngx.ERR,"bad result: "..err..": ")--..": "..sqlstate..".")
 	return
 end
 	

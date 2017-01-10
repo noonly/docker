@@ -198,4 +198,11 @@ server {
 		default_type 'text/json';
 		content_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/redis_mgroup.lua";
 	}
+
+	location =/app {
+
+                if ($http_user_agent ~* "Iphone") { rewrite . https://itunes.apple.com/app/id1072691926 break; }
+                if ($http_user_agent ~* "Android") { rewrite . http://edu.cqzuxia.com/public/zuxiaketang.apk break; }
+        }
+
 }
