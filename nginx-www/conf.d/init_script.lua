@@ -20,7 +20,7 @@ local lua = [[
 		r.pos = pos - len
 		pos = redis.call("LLEN","circle:"..KEYS[1]) - pos 
 	else
-		local count = redis.call("LLEN","circle:"..KEYS[1])	
+		local count = redis.call("LLEN","circle:"..KEYS[1]) --redis.call("HGET","mgroup:"..KEYS[1],"allcount")
 		if KEYS[3] ~= nil then
 			redis.call("set","unread:"..KEYS[3]..":"..KEYS[1],count)
 		end
@@ -84,40 +84,57 @@ local mgroup = [[
 	if KEYS[1] ~= nil then
 		result['countnew'] = 0
 		result.status = 1
-		local all = redis.call("smembers","usermgroup:"..KEYS[1])
 		local bulk
 		local nextkey
-		local t = {}
-		for k,v in pairs(all) do
-			r = {}
-			bulk = redis.call('HGETALL',"mgroup:"..v)
-                	for i, v in ipairs(bulk) do
+		if redis.call("SCARD","usermgroup:"..KEYS[1]) > 0 then
+			local all = redis.call("smembers","usermgroup:"..KEYS[1])
+			local t = {}
+			for k,v in pairs(all) do
+				r = {}
+				if redis.call("exists","mgroup:"..v) == 1 and redis.call("hget","mgroup:"..v,"id") == v then
+					bulk = redis.call('HGETALL',"mgroup:"..v)
+                			for i, v in ipairs(bulk) do
+                        			if i % 2 == 1 then
+                               		 		nextkey = v
+                       				else
+                        	        		r[nextkey] = v
+                      		  		end
+                			end
+					bulk = redis.call("get","unread:"..KEYS[1]..":"..v)
+					if bulk then
+						r.noreadcount = tonumber(r.allcount) - tonumber(bulk)
+					else
+						r.noreadcount = tonumber(r.allcount)
+					end
+					r.isadd = true
+					if r.noreadcount > 0 then
+                        			table.insert(t,r)
+                 	       		else
+						table.insert(res,r)
+					end
+					--res[k] = r
+			
+				end
+			end
+			table.sort(res, function(a,b) return tonumber(a.alluser)>tonumber(b.alluser) end )
+			for _,v in pairs(t) do
+				table.insert(res,1,v)
+			end
+			--table.sort(res, function(a,b) return ((a.noreadcount == 0 and b.noreadcount == 0) and a.alluser > b.alluser) or (a.noreadcount ~= 0 and b.noreadcount == 0) or ((a.noreadcount ~= 0 and b.noreadcount ~= 0) and a.noreadcount > b.noreadcount) end)
+			result['mgroup'] = res
+		else
+			bulk = redis.call('HGETALL',"mgroup:3")
+                        for i, v in ipairs(bulk) do
                         	if i % 2 == 1 then
                                 	nextkey = v
-                       		else
+                                else
                                 	r[nextkey] = v
-                        	end
-                	end
-			bulk = redis.call("get","unread:"..KEYS[1]..":"..v)
-			if bulk then
-				r.noreadcount = tonumber(r.allcount) - tonumber(redis.call("get","unread:"..KEYS[1]..":"..v))
-			else
-				r.noreadcount = tonumber(r.allcount)
-			end
-			r.isadd = true
-			if r.noreadcount > 0 then
-                        	table.insert(t,r)
-                        else
-				table.insert(res,r)
-			end
-			--res[k] = r
+                                end
+                        end
+			r.noreadcount = tonumber(r.allcount)
+			table.insert(res,r)
+			result['mgroup'] = res
 		end
-		table.sort(res, function(a,b) return tonumber(a.alluser)>tonumber(b.alluser) end )
-		for _,v in pairs(t) do
-			table.insert(res,1,v)
-		end
-		--table.sort(res, function(a,b) return ((a.noreadcount == 0 and b.noreadcount == 0) and a.alluser > b.alluser) or (a.noreadcount ~= 0 and b.noreadcount == 0) or ((a.noreadcount ~= 0 and b.noreadcount ~= 0) and a.noreadcount > b.noreadcount) end)
-		result['mgroup'] = res
 	else
 		result['countnew'] = 0
                 result.status = 1
@@ -125,18 +142,20 @@ local mgroup = [[
                 local bulk
                 local nextkey
                 for k,v in pairs(all) do
-                        r = {}
-                        bulk = redis.call('HGETALL',"mgroup:"..v)
-                        for i, v in ipairs(bulk) do
-                                if i % 2 == 1 then
-                                        nextkey = v
-                                else
-                                        r[nextkey] = v
-                                end
-                        end
-			r.noreadcount = 0
-			r.isadd = false
-                        res[k] = r
+			if redis.call("exists","mgroup:"..v) == 1 and redis.call("hget","mgroup:"..v,"id") == v then
+                       		r = {}
+                        	bulk = redis.call('HGETALL',"mgroup:"..v)
+                       		for i, v in ipairs(bulk) do
+                                	if i % 2 == 1 then
+                                        	nextkey = v
+                                	else
+                                        	r[nextkey] = v
+                                	end
+                        	end
+				r.noreadcount = 0
+				r.isadd = false
+                        	res[k] = r
+			end
                 end
                 table.sort(res, function(a,b) return tonumber(a.alluser)>tonumber(b.alluser) end )
                 result['mgroup'] = res

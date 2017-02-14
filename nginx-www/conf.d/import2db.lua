@@ -13,7 +13,7 @@ local redis = require("resty.rediscli")
 
 local red = redis.new()
 
-local r
+--local r
 --r = "e57ee787bb362cd3fe264bce9e3fae092954624c"
 --r = "1696bb90525a39832fbd48d76d6950a5e4f96cf2"
 --r = "6fbf7b32080b1753c1376f5e0fd86d6164e855de"
@@ -25,13 +25,12 @@ local r
 --r = "60607647ddd585e84ff9e58bc3f9965c79877720"
 --r = "9ed547a17cf84571adabd7f417817ff057c94b70"
 --r = "a466898245fd9f38060956b4cee76487b146b41a"
-r = "4d8df8404bc15b646fc878b45df6b92d3efbe4d2"
 local res, err = red:exec(
         function(red)
 		if user ~= nil then
             		return red:evalsha(r,1,user)
 		else
-			return red:evalsha(r,1,'1')
+			return red:evalsha(r,0)
 		end
         end
 )

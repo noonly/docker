@@ -13,7 +13,10 @@ local redis = require("resty.rediscli")
 
 local red = redis.new()
 
-local r = "084afb1d87aa3998aecb8b78458c8d9cd2024e5d"
+local r 
+--r = "084afb1d87aa3998aecb8b78458c8d9cd2024e5d"
+r="086c8b2d670d4545d29ebba8c1f7a8f89baace8f"
+--r = "7fa762ba8eb5b13e689034dc3ee35f6f9aba0635"
 local res, err = red:exec(
         function(red)
 		if user ~= nil then

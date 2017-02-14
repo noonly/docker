@@ -39,7 +39,7 @@ if ngx.var.arg_msgid ~= nil then
 	db:set_timeout(1000) -- 1 sec
 
 	local ok, err, errcode, sqlstate = db:connect{
-                    host = "172.17.0.33",
+                    host = "172.17.0.31",
                     port = 3306,
                     database = "app_noonly",
                     user = "root",

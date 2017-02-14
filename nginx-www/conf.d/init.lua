@@ -2,9 +2,9 @@
 --local res = cache:eval("return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}", 2, "key1", "key2", "first", "second")
 --	local res = cache:eval("return redis.call('get',KEYS[1])", 1, "222")
 if ngx.var.arg_c == nil then
---	return
+	return
 else
---	return
+	return
 end
 
 local mysql = require "resty.mysql"
