@@ -2,6 +2,7 @@ local resty_sha1 = require "resty.sha1"
 local str = require "resty.string"
 local upload = require "resty.upload"
 --local cjson = require "cjson"
+local gearman = require "resty.gearman"
 
 local chunk_size = 8192
 local form = upload:new(chunk_size)
@@ -19,7 +20,9 @@ function getExtension(str)
 end
 local file_name
 local suffix
-while true do
+local filelen = 0
+local dosomting = true
+while dosomting do
         local typ, res, err = form:read()
 
         if not typ then
@@ -74,6 +77,14 @@ while true do
                 end
         elseif typ == "body" then
                 if file then
+			filelen = filelen + tonumber(string.len(res))
+			if filelen > 104857600 then
+				file:close()
+				file = nil
+				dosomting = false
+				ngx.say('{"msg":"0","info":"file size too larger!!!"}')
+				break
+			end
                         file:write(res)
                         sha1:update(res)
                 end
@@ -86,7 +97,19 @@ while true do
                 local shasum = str.to_hex(sha1_sum)
                 os.rename(file_name,"/img/"..shasum .. suffix)
                 --ngx.say(file_name,"/tmp/"..shasum .. "."..suffix)
-                ngx.say('{"msg":"1","name":"'..shasum .. suffix..'","type":"'..suffix..'"}')
+                ngx.say('{"msg":"1","name":"'..shasum .. suffix..'","type":"'..suffix..'","size":"'..filelen..'"}')
+
+		if suffix == ".mp4" then
+			local gm = gearman:new()
+			gm:set_timeout(1000) -- 1 sec
+
+            		local ok, err = gm:connect("172.17.0.33", 4730)
+
+            		ok, err = gm:submit_job("video2png",shasum .. suffix)
+
+            		local ok, err = gm:set_keepalive(1, 100)
+		end
+
         elseif typ == "eof" then
                 break
 
