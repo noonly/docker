@@ -1,0 +1,10 @@
+{
+	"ui": true,
+	"dns_config": {
+		"allow_stale": false
+	},
+	"recursors": [
+		"8.8.8.8",
+		"8.8.4.4"
+	]
+}
