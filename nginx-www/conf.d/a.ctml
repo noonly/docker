@@ -17,22 +17,7 @@ server {
         error_page 401 = /zuxia/404.html;
         error_page 403 = /zuxia/404.html;
 	listen 80; 
-      	if ($host = 'www.noonly.com' ) {
-         	rewrite ^/(.*)$ http://edu.cqzuxia.com/$1 permanent;
-        }
-	location ~* \.mp4$ {
-		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
-        	root /video/;
-		limit_rate 350k;
-	}
-
-	location ~* \.(cur|gif|css|js|png|jpg|woff|apk|txt) {
-		##limit_req zone=session_limit burst=5;
-		#rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
-		proxy_pass http://public;
-		proxy_cache cache_one;
-		limit_rate 200k;
-	}
+	resolver  127.0.0.1:8600;
 
 	location =/ {
 		#limit_req zone=session_limit burst=5;

@@ -41,7 +41,7 @@ end
 function _M.new(opts)
     local config = opts or {}
     local self = {
-        host = config.host or "172.17.0.4",
+        host = config.host or "redis-master.service.dc1.consul",
         port = config.port or 6379,
         timeout = config.timeout or 5000,
         database = config.database or 0,

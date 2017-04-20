@@ -9,7 +9,7 @@ end
 if (ngx.var.cookie_NOONLYSESSION ~= nil) then
         local redis = require "resty.redis"
         local cache = redis.new()
-        cache.connect(cache, '172.17.0.4', '6379')
+        cache.connect(cache, 'redis-master.service.dc1.consul', '6379')
         local res = cache:get(ngx.var.cookie_NOONLYSESSION)
         if res~=ngx.null then
                 return  ngx.redirect("/admin/index.html")
