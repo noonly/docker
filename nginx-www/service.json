@@ -5,7 +5,7 @@
             "web",
             "nginx"
         ],
-         "port":6379,
+         "port":80,
          "check":{
              "name":"status",
              "tcp":"localhost:80",

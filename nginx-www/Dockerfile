@@ -2,7 +2,7 @@
 # start from official mongo image
 FROM ubuntu
 
-RUN apt-get update && apt-get install -y perl gcc make python libpcre3-dev libssl-dev supervisor
+RUN apt-get update && apt-get install -y perl gcc make libpcre3-dev libssl-dev
 # install consul agent
 #ADD consul_0.6.4_linux_amd64.zip /tmp/consul.zip
 ADD consul /bin/consul
@@ -33,10 +33,16 @@ ln -s /etc/nginx/nginx/sbin/nginx /usr/local/bin/nginx && mkdir -p /usr/local/op
 rm -rf /openresty-1.9.15.1
 
 ADD nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+ADD conf.d/ /usr/local/openresty/nginx/conf/conf.d/
+ADD localtime /etc/localtime
+ADD timezone /etc/timezone
 # Install goreman - foreman clone written in Go language
 
 # copy startup script
-ADD supervisord.conf /etc/supervisord.conf
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #ADD start.sh /start.sh
 # launch both mongo server and consul agent
-CMD ["/usr/bin/supervisord"]
+#CMD ["supervisord"]
+COPY start.sh /usr/local/bin/container-start
+ENTRYPOINT ["container-start"]
+#consul agent -join $CONSUL_HOST -data-dir /data/consul -config-dir /etc/consul.d

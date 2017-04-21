@@ -1,0 +1,1 @@
+{ "service":{ "name":"a", "tags":[ "database", "nosql" ],  "port":6379,  "check":{  "name":"status",  "tcp":"localhost:6379",  "interval":"30s"  }  } }

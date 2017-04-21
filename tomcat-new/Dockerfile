@@ -4,8 +4,7 @@ FROM tomcat
 
 # install consul agent
 ADD consul /bin/consul
-RUN apt-get update &&  apt-get install -y supervisor &&\
-    chmod +x /bin/consul && \
+RUN chmod +x /bin/consul && \
     mkdir -p {/data/consul,/etc/consul.d} 
 #RUN echo 'nameserver 127.0.0.1' > /etc/resolv.conf
 #RUN echo 'nameserver 114.114.114.114' >> /etc/resolv.conf
@@ -19,6 +18,11 @@ ADD server.xml /usr/local/tomcat/conf/server.xml
 # copy startup script
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 #ADD start.sh /start.sh
-EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 53/udp
+#EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 53/udp
+EXPOSE 8080
 # launch both mongo server and consul agent
-CMD ["supervisord"]
+#CMD ["supervisord"]
+COPY start.sh /usr/local/bin/container-start
+#ENTRYPOINT ["container-start", "/bin/consul", "agent","-data-dir=/data/consul","-config-dir=/project"]
+ENTRYPOINT ["container-start"]
+#CMD ["-join consul.service.dc1.consul"]
