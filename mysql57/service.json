@@ -1,0 +1,1 @@
+{"service":{"name":"libuser","tags":["database","mysql"],"port":3306,"check":{"name":"status","tcp":"localhost:3306","interval":"30s"}}} 
