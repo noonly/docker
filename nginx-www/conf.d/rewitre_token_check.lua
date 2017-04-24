@@ -1,8 +1,13 @@
 local random = ngx.var.cookie_NOONLY_KEY
-if (random == nil) then
-    return ngx.redirect("/auth_token?url=" .. ngx.var.request_uri)
-end
-local token = ngx.md5("Ntoken" .. random .. "NT123456NT" .. random)
-if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
-    return ngx.redirect("/auth_token?url=".. ngx.var.request_uri)
+if (random == nil) or (ngx.var.cookie_NOONLY_ACCESS ~= ngx.md5("Ntoken" .. random .. "NT123456NT" .. random)) then
+        local random = ngx.var.cookie_NOONLY_KEY
+        if (random == nil) then
+                random = ngx.md5(math.random(9999) .. os.time() .. math.random(9999) .. ngx.var.remote_addr)
+        end
+        local token = ngx.md5("Ntoken" .. random .. "NT123456NT" .. random)
+        if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
+
+                ngx.header["Set-Cookie"] = {"NOONLY_ACCESS=" .. token, "NOONLY_KEY=" .. random}
+        end
+
 end

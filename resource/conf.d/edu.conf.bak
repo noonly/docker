@@ -1,0 +1,26 @@
+upstream edu {
+    server 127.0.0.1:80;
+}
+
+#server {
+#    listen 80;
+#    server_name  edu.cqzuxia.com;
+#    rewrite ^/(.*) https://$server_name/$1 permanent;
+#}
+
+server {
+     listen 443;
+     ssl on;
+     ssl_certificate /usr/local/openresty/nginx/conf/conf.d/1_edu.cqzuxia.com_bundle.crt;
+     ssl_certificate_key /usr/local/openresty/nginx/conf/conf.d/server.key.un;
+     server_name edu.cqzuxia.com;
+
+
+             location / {
+		 client_max_body_size    1000m;
+
+        		proxy_pass http://edu;
+	}	
+
+}
+

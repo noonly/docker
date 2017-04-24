@@ -20,7 +20,7 @@ done;
 
 
 if [ "_$node" = "_" ]; then
-	node=hostname
+	node=`hostname`
 #	echo ""
 fi
 echo '{"service":{"name":"'$node'","tags":["database","mysql"],"port":3306,"check":{"name":"status","tcp":"localhost:3306","interval":"30s"}}} ' > /etc/consul.d/service.json

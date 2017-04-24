@@ -1,0 +1,15 @@
+{
+    "service":{
+        "name":"node",
+        "tags":[
+            "script",
+            "node"
+        ],
+         "port":3000,
+         "check":{
+             "name":"status",
+             "tcp":"localhost:3000",
+             "interval":"30s"
+         }
+     }
+}
