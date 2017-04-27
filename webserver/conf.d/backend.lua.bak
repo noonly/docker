@@ -1,0 +1,42 @@
+if ngx.status ~= ngx.HTTP_OK then
+	return
+end
+local request_method = ngx.var.request_method
+local args = nil
+
+if "GET" == request_method then
+    args = ngx.req.get_uri_args()
+elseif "POST" == request_method then
+    ngx.req.read_body()
+    args = ngx.req.get_post_args()
+end
+
+if args == nil then
+	--ngx.log(ngx.ERR,ngx.var.args)
+        ngx.exit(404)
+        return
+end
+
+local source = ""
+for k, v in pairs(args) do
+	if source == "" then
+		source = k.."="..v
+	end
+	source = source .."&"..k.."="..v
+end
+--ngx.log(ngx.ERR,ngx.var.uri.."?"..source)
+local key = ngx.var.uri..source;
+local redis = require "resty.redis"
+local cache = redis.new()
+cache:set_timeout(1000)
+cache.connect(cache, 'redis-master.service.dc1.consul', '6379')
+--cache.set_timeout(1000)
+
+cache:get_reused_times()
+
+
+cache:set(key,ngx.arg[1])
+cache:expire(key,1400)
+cache:set_keepalive(10000, 100)
+
+--ngx.log(ngx.ERR,tostring(resp))

@@ -1,0 +1,15 @@
+{
+    "service":{
+        "name":"inner",
+        "tags":[
+            "web",
+            "nginx"
+        ],
+         "port":80,
+         "check":{
+             "name":"status",
+             "tcp":"localhost:80",
+             "interval":"30s"
+         }
+     }
+}

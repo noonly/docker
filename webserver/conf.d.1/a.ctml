@@ -1,0 +1,67 @@
+limit_req_zone $cookie_NOONLY_ACCESS zone=session_limit:30m rate=300r/s;
+limit_req_zone $binary_remote_addr zone=token_limit:30m rate=200r/s;
+
+proxy_temp_path /tmp/proxy_temp_dir;
+proxy_cache_path /data/proxy_cache_dirlevels=1:2 keys_zone=cache_one:200m inactive=1d max_size=30g;
+
+{{range services}}{{ if .Tags.Contains "web" }}upstream {{.Name}} {
+	least_conn;
+	{{range service .Name}}server  {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{else}}server 127.0.0.1:65535;
+{{end}}
+}
+{{end}}{{end}}
+
+server {
+	listen 80; 
+	location ~* \.mp4$ {
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+        	root /v/;
+		limit_rate 300k;
+	}
+
+	location ~* \.(gif|css|js|png|jpg|woff) {
+		limit_req zone=session_limit burst=5;
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+		proxy_pass http://public;
+		proxy_cache cache_one;
+	}
+
+	location =/ {
+		#limit_req zone=session_limit burst=5;
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_token_check.lua";
+		#rewrite ^(.*)$ /admin/login.html last;
+	}
+
+	{{range services}}{{ if .Tags.Contains "web" }}location /{{.Name}}/ {
+		add_header Cache-Control no-store;
+		#limit_req zone=session_limit burst=5;
+		rewrite_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/rewitre_token_check.lua";
+		access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_session.lua";
+		proxy_pass http://{{.Name}};
+		client_max_body_size    1000m;
+		proxy_cache cache_one;
+		limit_rate 50k;
+  	}
+	{{end}}{{end}}
+
+	location /auth_token {
+		limit_req zone=token_limit burst=1;
+     		if ($arg_url = "") {
+         		return 403;
+     		}
+     		access_by_lua '
+         		local random = ngx.md5(math.random(9999) .. os.time() .. math.random(9999))
+         		local token = ngx.md5("Ntoken" .. random .. ngx.var.remote_addr .. random)
+         		if (ngx.var.cookie_NOONLY_ACCESS ~= token) then
+             			ngx.header["Set-Cookie"] = {"NOONLY_ACCESS=" .. token, "NOONLY_KEY=" .. random}
+             			return ngx.redirect(ngx.var.arg_url)
+         		end
+     		';
+	}
+
+     	#location /redis {
+	#	limit_req zone=auth_limit burst=1;
+        #	default_type 'text/html';
+        #	access_by_lua_file "/usr/local/openresty/nginx/conf/conf.d/access_by_redis.lua";
+   	#}
+}
