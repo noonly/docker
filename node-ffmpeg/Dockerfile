@@ -1,6 +1,7 @@
 FROM node
 
-ADD sources.list /etc/apt/sources.list
+#ADD sources.list /etc/apt/sources.list
+#ADD resolv.conf /etc/resolv.conf
 RUN apt-get update && \
 apt-get install -y libmp3lame-dev libx264-dev yasm && \
 wget http://ffmpeg.org/releases/ffmpeg-3.2.4.tar.bz2 && \
