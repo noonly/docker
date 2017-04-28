@@ -22,8 +22,9 @@ ADD https://launchpad.net/gearman-mysql-udf/trunk/0.6/+download/gearman-mysql-ud
 RUN apt-get install -y libmysqlclient-dev make
 RUN tar -zxvf gearman-mysql-udf-0.6.tar.gz && cd gearman-mysql-udf-0.6 && \
 ./configure --with-mysql=/usr/bin/mysql_config --libdir=/usr/lib/mysql/plugin/ && make && make install
-
-
+ADD docker.cnf /etc/mysql/conf.d/docker.cnf
+#ADD mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
+ADD plugin.sql /docker-entrypoint-initdb.d/plugin.sql
 # launch both mongo server and consul agent
 #CMD ["/usr/bin/supervisord"]
 #COPY docker-entrypoint.sh /usr/local/bin/
